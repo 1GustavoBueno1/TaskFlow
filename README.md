@@ -44,9 +44,6 @@ projeto/
 ├── Logs/
 │   └── SalvarLogs.py        # Registro de eventos do sistema
 │
-├── Errors/
-│   └── exceptions.py        # Exceções customizadas
-│
 ├── .env                     # Variáveis de ambiente (não versionado)
 ├── .gitignore
 └── requirements.txt
