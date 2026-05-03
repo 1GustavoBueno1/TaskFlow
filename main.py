@@ -19,7 +19,8 @@ def execute_action(choice) -> None:
                         '4': lambda: ui.handle(system.view_own_info),
                         '5': lambda: ui.handle(system.create_tasks),
                         '6': lambda: ui.handle(system.show_tasks),
-                        '7': lambda: ui.handle(system.edit_tasks)
+                        '7': lambda: ui.handle(system.edit_tasks),
+                        '8': lambda: ui.handle(system.del_task)
                         }
     action = options_for_user.get(choice)
     if action:
@@ -36,7 +37,8 @@ while True:
     "|4| Check my information",
     "|5| Creat a new task",
     "|6| Check my tasks",
-    "|7| Update tasks", 
+    "|7| Update tasks",
+    "|8| Delete tasks",
     "|0| Exit"]
     for option in menu:
         print(f'\n{option.center(columns)}')

@@ -1,6 +1,6 @@
 # Sistema de Cadastro e Tarefas
 
-Sistema de gerenciamento de usuários e tarefas via terminal, com persistência em banco de dados MySQL e senhas protegidas com bcrypt.
+Sistema de gerenciamento de usuários e tarefas via terminal, com persistência em banco de dados MySQL, senhas protegidas com bcrypt e verificação de email com regex
 
 ---
 
@@ -13,6 +13,7 @@ Sistema de gerenciamento de usuários e tarefas via terminal, com persistência 
 - Criação de tarefas
 - Visualização de tarefas
 - Edição de tarefas (nome, descrição, status)
+- Deleção de tarefas(id_task)
 
 ---
 
@@ -20,10 +21,13 @@ Sistema de gerenciamento de usuários e tarefas via terminal, com persistência 
 
 - Python 3.9+
 - MySQL
-- pymysql
 - bcrypt
+- cffi
+- cryptography
+- dotenv
+- pycparser
+- PyMySQL
 - python-dotenv
-
 ---
 
 ## Estrutura do Projeto
@@ -124,13 +128,3 @@ O fluxo sempre segue: `Interface → Sistema → DataBase`
 - Senhas armazenadas com hash bcrypt — a senha real nunca é salva no banco
 - Queries SQL parametrizadas com `%s` — protegido contra SQL injection
 - Credenciais do banco isoladas em variável de ambiente via `.env`
-
----
-
-## requirements.txt
-
-```
-pymysql
-bcrypt
-python-dotenv
-```
