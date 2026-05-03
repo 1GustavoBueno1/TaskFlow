@@ -13,9 +13,9 @@ class System:
         self.ui = Interface(self)
         self.logs = SaveLog()
         self.data_base = UserRepository()
-    def check_gmail(self, gmail) -> bool:
+    def check_gmail(self, gmail) -> bool | str:
         if _EMAIL_REGEX.fullmatch(gmail):
-            return True
+            return gmail
         return False
     
     def register_user(self) -> tuple[bool, str]:
