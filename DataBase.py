@@ -42,7 +42,7 @@ class UserRepository:
                         'id INT NOT NULL AUTO_INCREMENT,' \
                         'name VARCHAR(150) NOT NULL, ' \
                         'description VARCHAR(150),' \
-                        'status VARCHAR(50) DEFAULT "Pendente", ' \
+                        'status VARCHAR(50) DEFAULT "Outstanding", ' \
                         'user_id INT NOT NULL, ' \
                         'PRIMARY KEY (id), ' \
                         'CONSTRAINT fk_user_id FOREIGN KEY (user_id) ' \
