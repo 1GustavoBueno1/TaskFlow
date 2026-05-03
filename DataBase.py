@@ -49,7 +49,7 @@ class UserRepository:
                         'REFERENCES Users(id) ' \
                         'ON DELETE CASCADE ON UPDATE CASCADE)'
                     )
-                connection.commit()
+                    connection.commit()
     def insert_task(self, name: str, description: str, user_id : int) -> None:
         with get_connection() as connection:
             with connection.cursor() as cursor:
