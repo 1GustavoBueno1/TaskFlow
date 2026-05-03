@@ -39,20 +39,29 @@ class Interface:
         self.show_tasks(tasks)
         try:
             id_task = int(input("What task you do you want edit: "))
+            task_selected = str(input("|1| Name" \
+            "\n|2| Description" \
+            "\n|3| Status" \
+            "\nWhat field do you want for edit: "))
+            if task_selected == '1':
+                name = str(input("Enter a new name for your task: "))
+                return ('name', name, id_task)
+            if task_selected == '2':
+                description = str(input("Enter a new description: "))
+                return ('description', description, id_task)
+            if task_selected == '3':
+                    status = int(input("|1| Outstanding" \
+                    "\n|2| Finished"
+                    "\nWhat do you want to do ?"))
+                    if status == 1:
+                        status = 'Outstanding'
+                    if status == 2:
+                        status = 'Finished'
+                    else:
+                        return None
+                    return ('status', status, id_task)
         except ValueError:
             return None
-        task_selected = str(input("|1| Name" \
-        "\n|2| Description" \
-        "\n|3| Status" \
-        "\nWhat field do you want for edit: "))
-        if task_selected == '1':
-            name = str(input("Enter a new name for your task: "))
-            return ('name', name, id_task)
-        if task_selected == '2':
-            description = str(input("Enter a new description: "))
-            return ('description', description, id_task)
-        if task_selected == '3':
-            return ('status','Completed', id_task)
         return None
         
     def show_tasks(self, tasks: dict | bool) -> True | False:

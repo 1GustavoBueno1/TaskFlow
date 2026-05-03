@@ -16,3 +16,8 @@ Sucess: Success to login: teste@gmail.com
 Sucess: Success to login: teste1@gmail.com
 Sucess: Success to login: teste1@gmail.com
 Sucess: Success to login: Gustavo@gmail.com
+Sucess: Success to login: gustavo3010@gmail.com
+Erro: Access deined: gustavo3010@gmail.com
+Erro: Access deined: gustavo3010@gmail.com
+Sucess: Success to login: gustavo3010@gmail.com
+Sucess: Success to login: gustavo3010@gmail.com
