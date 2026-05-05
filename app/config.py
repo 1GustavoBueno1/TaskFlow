@@ -1,0 +1,17 @@
+import pymysql
+import os
+from dotenv import load_dotenv
+from pymysql.cursors import DictCursor
+load_dotenv()
+class Config():
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    def get_connection():
+        connection = pymysql.connect(
+            host = os.getenv('DB_HOST', 'localhost'),
+            user = os.getenv('DB_USER', ''),
+            password = os.getenv('DB_PASSWORD', ''),
+            database = os.getenv('DB_NAME', ''),
+            port = int(os.getenv('DB_PORT', '3307')),
+            charset = 'utf8mb4',
+            cursorclass = DictCursor)
+        return connection

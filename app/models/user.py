@@ -1,22 +1,20 @@
+from app.config import Config
+from flask import current_app
 import pymysql
-import os
-from dotenv import load_dotenv
-from pymysql.cursors import DictCursor
-load_dotenv()
-def get_connection():
-    connection = pymysql.connect(
-        host = os.getenv('DB_HOST', 'localhost'),
-        user = os.getenv('DB_USER', ''),
-        password = os.getenv('DB_PASSWORD', ''),
-        database = os.getenv('DB_NAME', ''),
-        port = int(os.getenv('DB_PORT', '3307')),
-        charset = 'utf8mb4',
-        cursorclass = DictCursor)
-    return connection
+
+
 allowed_columns_user = frozenset(('name', 'gmail', 'password'))
 class UserRepository:
+    def __init__(self):
+        self.connection_db = pymysql.connect(
+            host=current_app.config['DB_HOST'],
+            password=current_app.config['DB_PASSWORD'],
+            name=current_app.config['DB_NAME'],
+            user=current_app.config['DB_USER'],
+            port=current_app.config['DB_PORT']
+        )
     def create_table_users(self):
-        with get_connection() as connection:
+        with self.connection_db.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute("SHOW TABLES LIKE 'Users' ")
                 if not cursor.fetchall():
@@ -32,7 +30,7 @@ class UserRepository:
                     )
                     connection.commit()
     def insert(self, name: str, gmail: str, password: str) -> None:
-        with get_connection() as connection:
+        with self.connection_db.get_connection() as connection:
             with connection.cursor() as cursor:
                     cursor.execute(
                         'INSERT INTO Users '
@@ -41,7 +39,7 @@ class UserRepository:
                     )
             connection.commit()
     def login(self, gmail: str) -> bool:
-        with get_connection() as connection:
+        with self.connection_db.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     'SELECT id, name, gmail, password FROM Users WHERE gmail = %s',
@@ -52,7 +50,7 @@ class UserRepository:
     def update_user(self, column: str, new_data: str, id: int) -> None:
         if column not in allowed_columns_user:
             raise ValueError(f'Column {column} dont exist!')
-        with get_connection() as connection:
+        with self.connection_db.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     f'UPDATE Users SET {column} = %s WHERE id = %s',
