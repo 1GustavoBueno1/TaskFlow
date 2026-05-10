@@ -1,30 +1,37 @@
+from app.models.user import UserRepository
+from Logs.savelogs import SaveLog
 import bcrypt
 import re
 
 _EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@gmail\.com$')
-class auth():
+class Auth:
+    def __init__(self):
+        self.data_base = UserRepository()
+        self.logs = SaveLog()
     def check_gmail(self, gmail) -> bool | str:
         if _EMAIL_REGEX.fullmatch(gmail):
             return gmail
         return False
-    # def password_hash(self):
-    #     password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('utf-8')
-    # def check_password():
-    #     bcrypt.checkpw(.encode(), user['password'].encode())
-    def register_user(self) -> tuple[bool, str]:
-            name, gmail, password = self.ui.new_user()
+    def password_hash(self, password):
+        password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('utf-8')
+        return password_hash
+
+    def check_password(self, password):
+        bcrypt.checkpw(password.encode(), user['password'].encode())
+    def register_user(self, name, email, password) -> tuple[bool, str]:
             if not name:
                 return False, "The name field cannot be empty"
             if len(password) < 6:
-                return False, 'Your password is too short!'
-            # try:
-            #     if self.check_gmail(gmail):
-            #         password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('utf-8')
-            #         self.data_base.insert(name, gmail, password_hash)
-            #         self.logs.success(f"Register completed: {gmail}")
-            #         return True, 'User registration successfull'
-            #     return False, 'The email address you entered is incorrect'
-            #     return False, 'Gmail already exists'
+                return False, "Your password is too short!"
+            if not self.check_gmail(email):
+                return False, 'Insira um email valido'
+            try:
+                password_hash = self.password_hash(password)
+                self.data_base.insert(name, email, password_hash)
+                self.logs.success(f"Register completed: {email}")
+                return True, 'User registration successfull'
+            except ValueError:
+                return False, "Email ja existente!"
     def login(self) -> tuple[bool, str]:
         gmail, password = self.ui.login()
         user = self.data_base.login(gmail)

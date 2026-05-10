@@ -1,5 +1,6 @@
 from  pymysql.err import IntegrityError
 from flask.blueprints import Blueprint
+import bcrypt
 
 user_bp = Blueprint('user', __name__, url_prefix = 'profile')
 class User():

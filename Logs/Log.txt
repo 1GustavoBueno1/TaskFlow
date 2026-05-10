@@ -21,3 +21,6 @@ Erro: Access deined: gustavo3010@gmail.com
 Erro: Access deined: gustavo3010@gmail.com
 Sucess: Success to login: gustavo3010@gmail.com
 Sucess: Success to login: gustavo3010@gmail.com
+Sucess: Register completed: gustavo@gmail.com
+Sucess: Register completed: gustavo@gmail.com
+Sucess: Register completed: gustavo@gmail.com
