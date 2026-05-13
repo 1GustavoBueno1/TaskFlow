@@ -1,4 +1,3 @@
-from flask import current_app
 from app.config import Config
 import pymysql
 
@@ -21,6 +20,15 @@ class UserRepository:
                         ')'
                     )
                     connection.commit()
+    def find(self, informa):
+        with Config.get_connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    'SELECT id, name, gmail FROM Users WHERE id = %s',
+                    (informa, )
+                )
+                user_id = cursor.fetchone()
+                return user_id
     def insert(self, name: str, gmail: str, password: str) -> None:
         try:
             with Config.get_connection() as connection:
@@ -33,7 +41,7 @@ class UserRepository:
                 connection.commit()
         except pymysql.err.IntegrityError:
             raise ValueError("Email ja existente")
-    def login(self, gmail: str) -> bool:
+    def login(self, gmail: str) -> dict:
         with Config.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(

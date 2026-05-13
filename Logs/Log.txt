@@ -24,3 +24,10 @@ Sucess: Success to login: gustavo3010@gmail.com
 Sucess: Register completed: gustavo@gmail.com
 Sucess: Register completed: gustavo@gmail.com
 Sucess: Register completed: gustavo@gmail.com
+Sucess: Success to login: gustavo@gmail.com
+Erro: Access deined: gustavo@gmail.com
+Erro: Access deined: gustavo@gmail.com
+Sucess: Success to login: gustavo@gmail.com
+Sucess: Success to login: gustavo@gmail.com
+Sucess: Success to login: gustavo@gmail.com
+Sucess: Success to login: gustavo@gmail.com

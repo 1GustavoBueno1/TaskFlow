@@ -1,8 +1,8 @@
+from flask import session
 from app.models.user import UserRepository
 from Logs.savelogs import SaveLog
 import bcrypt
 import re
-
 _EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@gmail\.com$')
 class Auth:
     def __init__(self):
@@ -16,8 +16,11 @@ class Auth:
         password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('utf-8')
         return password_hash
 
-    def check_password(self, password):
-        bcrypt.checkpw(password.encode(), user['password'].encode())
+    def check_password(self, password, user_password):
+        if bcrypt.checkpw(password.encode(), user_password['password'].encode()):
+            return True
+        return False
+        
     def register_user(self, name, email, password) -> tuple[bool, str]:
             if not name:
                 return False, "The name field cannot be empty"
@@ -32,12 +35,14 @@ class Auth:
                 return True, 'User registration successfull'
             except ValueError:
                 return False, "Email ja existente!"
-    def login(self) -> tuple[bool, str]:
-        gmail, password = self.ui.login()
-        user = self.data_base.login(gmail)
-        if user and bcrypt.checkpw(password.encode(), user['password'].encode()):
-            self.user_logged = user
-            self.logs.success(f"Success to login: {gmail}")
-            return True, 'Success to carry out login'
-        self.logs.error(f"Access deined: {gmail}")
-        return False, 'Error to carry out login, check your credentials and try again!\n'
+    def login(self, email, password) -> tuple[bool, str]:
+        if not email or not password:
+            return None, "Nao pode haver campos em branco!"
+        user = self.data_base.login(email)
+        if not user:
+            return None, "Credenciais invalidas!"
+        if self.check_password(password, user):
+            self.logs.success(f"Success to login: {email}")
+            return user, 'Success to carry out login'
+        self.logs.error(f"Access deined: {email}")
+        return None, 'Credenciais invalidas!\n'

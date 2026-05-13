@@ -1,13 +1,14 @@
 from flask.blueprints import Blueprint
 from app.services.auth_service import Auth
-from flask import request, jsonify
+from app.models.user import UserRepository
+from flask import request, jsonify, session
 
 auth_bp = Blueprint('auth', __name__, url_prefix = '/auth')
-
-@auth_bp.route('/register', methods = ['GET', 'POST'])
+auth = Auth()
+db = UserRepository()
+@auth_bp.route('/register', methods = ['POST'])
 def register_user() -> tuple[bool, str]:
     if request.method == 'POST':
-        auth = Auth()
         dados = request.get_json()
         if not dados:
             return jsonify({"erro": "Body json e obrigatorio"}), 400
@@ -20,7 +21,19 @@ def register_user() -> tuple[bool, str]:
         if not reposta:
             return jsonify({"erro": mensagem}), 400
         return jsonify({"Sucesso": mensagem}), 201
-@auth_bp.route('/login', methods = ['GET', 'POST'])
+@auth_bp.route('/login', methods = ['POST'])
 def login() -> tuple[bool, str]:
     if request.method == 'POST':
-        ...
+        dados_do_usuario = request.get_json()
+        if not dados_do_usuario:
+            return jsonify({"Erro": "Body json e obrigatorio!"}), 400
+        email = dados_do_usuario.get('email')
+        senha = dados_do_usuario.get('senha')
+        if not email or not senha:
+            return jsonify({"Erro": "Todos os campos devem estar preenchidos!"}), 400
+        user, msg = auth.login(email, senha)
+        if user is None:
+            return jsonify({"Erro": msg}), 401
+        user_id = user.get('id')
+        session['user_id'] = user_id
+        return jsonify({"Sucesso": msg, "user": user_id}), 200
