@@ -1,37 +1,38 @@
-from  pymysql.err import IntegrityError
 from flask.blueprints import Blueprint
-import bcrypt
-
+from app.models.user import UserRepository
+from app.services.auth_service import Auth
+import pymysql
+allowed_columns_user = frozenset(('name', 'gmail', 'password'))
 user_bp = Blueprint('user', __name__, url_prefix = 'profile')
 class User():
-    def view_profile(self) -> tuple[bool, str]:
-        if self.user_logged:
-            return True, f'ID = {self.user_logged['id']} | Name = {self.user_logged['name']} | Email = {self.user_logged['gmail']}'
-        return False, 'Carry out login to check your informations!'
-    def edit_profile(self) -> tuple[bool, str]:
-        if self.user_logged:
-            result = self.ui.edit_profile()
-            if result is None:
-                return False, 'Invalid option'
-            colum, data = result
-            if data is None:
-                return False, 'Field cannot be empty' 
-            if colum == 'password':
-                if len(data) < 6:
-                    return False, 'Your passsword is too short'
-                data = bcrypt.hashpw(data.encode(), bcrypt.gensalt()).decode('utf-8')
-            if colum == 'gmail':
-                data = self.check_gmail(data)
-                if not data:
-                    return False, 'The email address you entered is incorrect'
+    def __init__(self):
+        self.user_db = UserRepository()
+        self.autenticacao = Auth()
+    def edit_profile(self, column, dado, user_id) -> tuple[bool, str]:
+        if column not in allowed_columns_user:
+            return False, 'Coluna nao existente'
+        if dado is None or column is None:
+            return False, 'Nao pode haver campos vazios'
+        if column == 'password':
+            if len(dado) < 6:
+                return False, 'Your passsword is too short'
+            novo_dado = self.autenticacao.password_hash(dado)
             try:
-                self.data_base.update_user(colum, data, self.user_logged['id'])
-                self.user_logged[colum] = data
-                return True, 'Success when updating the information'
+                self.user_db.update_user(column, novo_dado, user_id)
+                return True, 'Dado alterado com sucesso!'
             except ValueError:
-                return False, f'Column {colum} dont exist'
-            except IntegrityError:
+                return False, 'Ocorreu um erro ao alterar suas informações!'
+        if column == 'gmail':
+            novo_dado = self.autenticacao.check_gmail(dado)
+            if not novo_dado:
+                return False, 'The email address you entered is incorrect'
+            try:
+                self.user_db.update_user(column, novo_dado, user_id)
+                return True, 'Dado alterado com sucesso!'
+            except ValueError:
+                return False, f'Column {column} dont exist'
+            except pymysql.err.IntegrityError:
                 return False, 'Gmail already exists'
-        return False, 'Carry out login for update your informations!'
-    def password_hash(self):
-        password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('utf-8')
+        if column == 'name':
+            self.user_db.update_user(column, dado, user_id)
+            return True, 'Dado alterado com sucesso!'
