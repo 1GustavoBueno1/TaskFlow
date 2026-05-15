@@ -1,28 +1,25 @@
 from flask.blueprints import Blueprint
+from app.models.task import TaskRepository
 
 auth_bp = Blueprint('auth', __name__, url_prefix = '/task')
 
 class Tasks():
+    def __init__(self):
+        self.task_db = TaskRepository()
     def list_tasks(self) -> tuple[bool, str]:
         if self.user_logged:
             if self.ui.show_tasks(self.data_base.show_tasks(self.user_logged['id'])):
                 return True, ""
             return False, 'You dont have tasks for show'
         return False, 'Log in to view tasks.'
-    def edit_tasks(self) -> tuple[bool, str]:
-        if self.user_logged:
-            result = self.ui.edit_task(self.data_base.show_tasks(self.user_logged['id']))
-            if result is None:
-                return False, 'Error editing task'
-            colum, new_data, id_task = result
-            if colum is None or new_data is None or id_task is None:
-                return False, 'Field cannot be empty'
-            try:
-                self.data_base.update_task(colum, new_data, self.user_logged['id'], id_task)
-                return True, 'Task updated successfully!'
-            except ValueError:
-                return False, f'Column {colum} dont exist'
-        return False, 'Carry out login for update tasks'
+    def edit_tasks(self, column, novo_dado, id_task, user_id) -> tuple[bool, str]:
+        if column is None or novo_dado is None or id_task is None or user_id is None:
+            return False, 'Nao pode haver campos em branco!'
+        try:
+            self.task_db.update_task(column, novo_dado, user_id, id_task)
+            return True, 'Task updated successfully!'
+        except ValueError:
+            return False, f'Column {column} dont exist'
     def del_task(self) -> tuple[bool, str]:
         if self.user_logged:
             task_selected = self.ui.del_task(self.data_base.show_tasks(self.user_logged['id']))
