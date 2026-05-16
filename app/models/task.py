@@ -41,6 +41,7 @@ class TaskRepository():
                 tasks = cursor.fetchall()
                 if tasks:
                     return tasks
+                return False
     def update_task(self, column: str, new_data: str, user_id: int, task_id: int) -> None:
         if column not in allowed_columns_task:
             raise ValueError(f'Column {column} dont exist')
@@ -58,5 +59,7 @@ class TaskRepository():
                     f'DELETE FROM Tasks WHERE user_id = %s AND id = %s',
                     (user_id, task_id)
                 )
-                connection.commit()
-                return cursor.rowcount > 0
+                if cursor.rowcount == 1:
+                    connection.commit()
+                    return True
+                return False
