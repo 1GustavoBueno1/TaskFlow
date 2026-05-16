@@ -1,48 +1,51 @@
-from flask import session
 from app.models.user import UserRepository
-from Logs.savelogs import SaveLog
+from Logs.savelogs import SalvarLog
 import bcrypt
 import re
-_EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@gmail\.com$')
-class Auth:
-    def __init__(self):
-        self.data_base = UserRepository()
-        self.logs = SaveLog()
-    def check_gmail(self, gmail) -> bool | str:
-        if _EMAIL_REGEX.fullmatch(gmail):
-            return gmail
-        return False
-    def password_hash(self, password):
-        password_hash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode('utf-8')
-        return password_hash
 
-    def check_password(self, password, user_password):
-        if bcrypt.checkpw(password.encode(), user_password['password'].encode()):
-            return True
+
+_EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@gmail\.com$')
+
+
+class Autenticacao:
+    def __init__(self) -> None:
+        self.banco_dados = UserRepository()
+        self.logs = SalvarLog()
+
+    def validar_email(self, email: str) -> str | bool:
+        if _EMAIL_REGEX.fullmatch(email):
+            return email
         return False
-        
-    def register_user(self, name, email, password) -> tuple[bool, str]:
-            if not name:
-                return False, "The name field cannot be empty"
-            if len(password) < 6:
-                return False, "Your password is too short!"
-            if not self.check_gmail(email):
-                return False, 'Insira um email valido'
-            try:
-                password_hash = self.password_hash(password)
-                self.data_base.insert(name, email, password_hash)
-                self.logs.success(f"Register completed: {email}")
-                return True, 'User registration successfull'
-            except ValueError:
-                return False, "Email ja existente!"
-    def login(self, email, password) -> tuple[bool, str]:
-        if not email or not password:
-            return None, "Nao pode haver campos em branco!"
-        user = self.data_base.login(email)
-        if not user:
-            return None, "Credenciais invalidas!"
-        if self.check_password(password, user):
-            self.logs.success(f"Success to login: {email}")
-            return user, 'Success to carry out login'
-        self.logs.error(f"Access deined: {email}")
-        return None, 'Credenciais invalidas!\n'
+
+    def gerar_hash_senha(self, senha: str) -> str:
+        return bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode('utf-8')
+
+    def verificar_senha(self, senha: str, usuario: dict) -> bool:
+        return bcrypt.checkpw(senha.encode(), usuario['password'].encode())
+
+    def cadastrar_usuario(self, nome: str, email: str, senha: str) -> tuple[bool, str]:
+        if not nome:
+            return False, "O campo nome não pode estar vazio"
+        if len(senha) < 6:
+            return False, "Sua senha é muito curta!"
+        if not self.validar_email(email):
+            return False, "Insira um email válido"
+        try:
+            senha_hash = self.gerar_hash_senha(senha)
+            self.banco_dados.insert(nome, email, senha_hash)
+            self.logs.sucesso(f"Cadastro realizado: {email}")
+            return True, "Cadastro realizado com sucesso"
+        except ValueError:
+            return False, "Email já existente!"
+
+    def login(self, email: str, senha: str) -> tuple[dict | None, str]:
+        if not email or not senha:
+            return None, "Não pode haver campos em branco!"
+        usuario = self.banco_dados.login(email)
+        if not usuario:
+            return None, "Credenciais inválidas!"
+        if self.verificar_senha(senha, usuario):
+            self.logs.sucesso(f"Login realizado com sucesso: {email}")
+            return usuario, "Login realizado com sucesso"
+        self.logs.erro(f"Acesso negado: {email}")
+        return None, "Credenciais inválidas!"

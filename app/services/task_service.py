@@ -1,33 +1,41 @@
-from flask.blueprints import Blueprint
 from app.models.task import TaskRepository
 
-auth_bp = Blueprint('auth', __name__, url_prefix = '/task')
 
-class Tasks():
-    def __init__(self):
-        self.task_db = TaskRepository()
-    def list_tasks(self, user_id) -> tuple[bool, str] | tuple[bool, dict]:
-        tasks = self.list_tasks(user_id)
-        if tasks:
-            return True, tasks
-        return False, 'You dont have tasks for show'
-    def edit_tasks(self, column, novo_dado, id_task, user_id) -> tuple[bool, str]:
-        if column is None or novo_dado is None or id_task is None or user_id is None:
-            return False, 'Nao pode haver campos em branco!'
+MAPA_CAMPOS_TAREFA = {'nome': 'name', 'descricao': 'description', 'status': 'status'}
+
+
+class Tarefas:
+    def __init__(self) -> None:
+        self.banco_tarefa = TaskRepository()
+
+    def listar_tarefas(self, id_usuario: int) -> tuple[bool, str | list]:
+        tarefas = self.banco_tarefa.show_tasks(id_usuario)
+        if tarefas:
+            return True, tarefas
+        return False, 'Você não possui tarefas para visualizar'
+
+    def editar_tarefas(self, campo: str, novo_dado: str, id_tarefa: int, id_usuario: int) -> tuple[bool, str]:
+        if campo is None or novo_dado is None or id_tarefa is None or id_usuario is None:
+            return False, 'Não pode haver campos em branco!'
+        coluna = MAPA_CAMPOS_TAREFA.get(campo)
+        if coluna is None:
+            return False, f'Campo {campo} não existe'
         try:
-            self.task_db.update_task(column, novo_dado, user_id, id_task)
-            return True, 'Task updated successfully!'
+            self.banco_tarefa.update_task(coluna, novo_dado, id_usuario, id_tarefa)
+            return True, 'Tarefa atualizada com sucesso!'
         except ValueError:
-            return False, f'Column {column} dont exist'
-    def del_task(self, id_task, user_id) -> tuple[bool, str]:
-        if id_task is None or user_id is None:
-            return False, 'Nao pode haver campos em branco!'
-        task_deletada = self.task_db.del_task(user_id, id_task)
-        if task_deletada >= 1:
-            return True, 'Task deleted successfully!'
-        return False, 'Nao foi possivel deletar essa tarefa'
-    def create_tasks(self, nome, descricao, user_id) -> tuple[bool, str]:
-            if nome is None or user_id is None or descricao is None:
-                return False, 'Nao pode haver campos em braco!'
-            self.task_db.insert_task(nome, descricao, user_id)
-            return True, 'Task created successfully'
+            return False, f'Campo {campo} não existe'
+
+    def deletar_tarefa(self, id_tarefa: int, id_usuario: int) -> tuple[bool, str]:
+        if id_tarefa is None or id_usuario is None:
+            return False, 'Não pode haver campos em branco!'
+        linhas_afetadas = self.banco_tarefa.del_task(id_usuario, id_tarefa)
+        if linhas_afetadas >= 1:
+            return True, 'Tarefa deletada com sucesso!'
+        return False, 'Não foi possível deletar essa tarefa'
+
+    def criar_tarefa(self, nome: str, descricao: str, id_usuario: int) -> tuple[bool, str]:
+        if nome is None or id_usuario is None or descricao is None:
+            return False, 'Não pode haver campos em branco!'
+        self.banco_tarefa.insert_task(nome, descricao, id_usuario)
+        return True, 'Tarefa criada com sucesso'

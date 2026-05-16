@@ -2,9 +2,11 @@ from app.config import Config
 import pymysql
 
 
-allowed_columns_user = frozenset(('name', 'gmail', 'password'))
+COLUNAS_PERMITIDAS_USUARIO = frozenset(('name', 'gmail', 'password'))
+
+
 class UserRepository:
-    def create_table_users(self):
+    def create_table_users(self) -> None:
         with Config.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute("SHOW TABLES LIKE 'Users' ")
@@ -15,48 +17,49 @@ class UserRepository:
                         'name VARCHAR(50) NOT NULL, '
                         'gmail VARCHAR(100) NOT NULL, '
                         'password VARCHAR(255) NOT NULL, '
-                        'PRIMARY KEY (id), ' 
+                        'PRIMARY KEY (id), '
                         'UNIQUE KEY (gmail)'
                         ')'
                     )
                     connection.commit()
-    def find(self, informa):
+
+    def find(self, id_usuario: int) -> dict | None:
         with Config.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     'SELECT id, name, gmail FROM Users WHERE id = %s',
-                    (informa, )
+                    (id_usuario,)
                 )
-                user_id = cursor.fetchone()
-                return user_id
-    def insert(self, name: str, gmail: str, password: str) -> None:
+                return cursor.fetchone()
+
+    def insert(self, nome: str, email: str, senha: str) -> None:
         try:
             with Config.get_connection() as connection:
                 with connection.cursor() as cursor:
-                        cursor.execute(
-                            'INSERT INTO Users'
-                            '(name, gmail, password) VALUES (%s, %s, %s)', 
-                            (name, gmail, password)
-                        )
+                    cursor.execute(
+                        'INSERT INTO Users (name, gmail, password) VALUES (%s, %s, %s)',
+                        (nome, email, senha)
+                    )
                 connection.commit()
         except pymysql.err.IntegrityError:
-            raise ValueError("Email ja existente")
-    def login(self, gmail: str) -> dict:
+            raise ValueError("Email já existente")
+
+    def login(self, email: str) -> dict | None:
         with Config.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
                     'SELECT id, name, gmail, password FROM Users WHERE gmail = %s',
-                    (gmail, )
+                    (email,)
                 )
-                user_login = cursor.fetchone()
-                return user_login
-    def update_user(self, column: str, new_data: str, id: int) -> None:
-        if column not in allowed_columns_user:
-            raise ValueError(f'Column {column} dont exist!')
+                return cursor.fetchone()
+
+    def update_user(self, coluna: str, novo_dado: str, id_usuario: int) -> None:
+        if coluna not in COLUNAS_PERMITIDAS_USUARIO:
+            raise ValueError(f'Coluna {coluna} não existe!')
         with Config.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f'UPDATE Users SET {column} = %s WHERE id = %s',
-                    (new_data, id)
+                    f'UPDATE Users SET {coluna} = %s WHERE id = %s',
+                    (novo_dado, id_usuario)
                 )
                 connection.commit()

@@ -1,55 +1,66 @@
 from flask.blueprints import Blueprint
-from flask import request, session, jsonify
+from flask import request, session, jsonify, Response
 from app.models.task import TaskRepository
-from app.services.task_service import Tasks
-task_bp = Blueprint('Task', __name__, url_prefix = '/task')
-task_db = TaskRepository()
-task = Tasks()
-@task_bp.route('/View', methods = ['GET'])
-def list_tasks() -> tuple[bool, str]:
+from app.services.task_service import Tarefas
+
+tarefa_bp = Blueprint('tarefa', __name__, url_prefix='/tarefa')
+banco_tarefa = TaskRepository()
+servico_tarefa = Tarefas()
+
+
+@tarefa_bp.route('/listar', methods=['GET'])
+def listar_tarefas() -> tuple[Response, int]:
     if request.method == 'GET':
-        user_id = session.get('user_id')
-        if user_id:
-            tasks = task.list_tasks(user_id)
-            if tasks:
-                return jsonify(tasks), 200
-            return jsonify({'Erro': 'Voce nao possui tarefas para visualizar'}), 400
-        return jsonify({"Erro": "Efetue login para prosseguir!"}), 400
-@task_bp.route('/EditTask', methods = ['PUT'])
-def edit_tasks() -> tuple[bool, str]:
+        id_usuario = session.get('user_id')
+        if id_usuario:
+            sucesso, tarefas = servico_tarefa.listar_tarefas(id_usuario)
+            if sucesso:
+                return jsonify(tarefas), 200
+            return jsonify({'Erro': tarefas}), 400
+        return jsonify({"Erro": "Efetue login para prosseguir!"}), 401
+
+
+@tarefa_bp.route('/editar', methods=['PUT'])
+def editar_tarefas() -> tuple[Response, int]:
     if request.method == 'PUT':
-        user_id = session.get('user_id')
-        if user_id:
-            dados_postman = request.get_json()
-            task_id = dados_postman.get('task_id')
-            for key, value in dados_postman.items():
-                resposta, msg = task.edit_tasks(key, value, task_id, user_id )
+        id_usuario = session.get('user_id')
+        if id_usuario:
+            dados = request.get_json()
+            id_tarefa = dados.get('id_tarefa')
+            for chave, valor in dados.items():
+                if chave == 'id_tarefa':
+                    continue
+                resposta, mensagem = servico_tarefa.editar_tarefas(chave, valor, id_tarefa, id_usuario)
                 if resposta:
-                    return jsonify({'Sucesso': msg}), 200
-                return jsonify({'Erro': msg}), 400
-        return jsonify({'Erro': 'Efetue login para prosseguir:'}), 400
-@task_bp.route('/del_task', methods = ['DELETE'])
-def del_task() -> tuple[bool, str]:
+                    return jsonify({'Sucesso': mensagem}), 200
+                return jsonify({'Erro': mensagem}), 400
+        return jsonify({'Erro': 'Efetue login para prosseguir!'}), 401
+
+
+@tarefa_bp.route('/deletar', methods=['DELETE'])
+def deletar_tarefa() -> tuple[Response, int]:
     if request.method == 'DELETE':
-        user_id = session.get('user_id')
-        if user_id:
-            dados_postman = request.get_json()
-            task_id = dados_postman.get('task_id')
-            resposta, msg = task.del_task(task_id, user_id)
+        id_usuario = session.get('user_id')
+        if id_usuario:
+            dados = request.get_json()
+            id_tarefa = dados.get('id_tarefa')
+            resposta, mensagem = servico_tarefa.deletar_tarefa(id_tarefa, id_usuario)
             if resposta:
-                return jsonify({'Sucesso': msg}), 200
-            return jsonify({'Erro': msg}), 400
-        return jsonify({'Erro': 'Efetue login para prosseguir!'}), 400
-@task_bp.route('/create_task', methods = ['POST'])
-def create_tasks() -> tuple[bool, str]:
+                return jsonify({'Sucesso': mensagem}), 200
+            return jsonify({'Erro': mensagem}), 400
+        return jsonify({'Erro': 'Efetue login para prosseguir!'}), 401
+
+
+@tarefa_bp.route('/criar', methods=['POST'])
+def criar_tarefa() -> tuple[Response, int]:
     if request.method == 'POST':
-        user_id = session.get('user_id')
-        if user_id:
-            dados_postman = request.get_json()
-            nome = dados_postman.get('nome')
-            descricao = dados_postman.get('descrição')
-            resposta, msg = task.create_tasks(nome, descricao, user_id)
+        id_usuario = session.get('user_id')
+        if id_usuario:
+            dados = request.get_json()
+            nome = dados.get('nome')
+            descricao = dados.get('descricao')
+            resposta, mensagem = servico_tarefa.criar_tarefa(nome, descricao, id_usuario)
             if resposta:
-                return jsonify({'Sucesso': msg}), 200
-            return jsonify({'Erro': msg}), 400
-        return jsonify({'Erro': 'Efetue login para prosseguir!'}), 400
+                return jsonify({'Sucesso': mensagem}), 201
+            return jsonify({'Erro': mensagem}), 400
+        return jsonify({'Erro': 'Efetue login para prosseguir!'}), 401

@@ -1,29 +1,33 @@
 from flask.blueprints import Blueprint
-from flask import request, jsonify, session
+from flask import request, jsonify, session, Response
 from app.models.user import UserRepository
-from app.services.user_service import User
-user_bp = Blueprint('user', __name__, url_prefix = '/profile')
-user_db = UserRepository()
-user_service = User()
-@user_bp.route('/View', methods = ['GET'])
-def view_profile() -> dict:
+from app.services.user_service import Usuario
+
+usuario_bp = Blueprint('usuario', __name__, url_prefix='/perfil')
+banco_usuario = UserRepository()
+servico_usuario = Usuario()
+
+
+@usuario_bp.route('/visualizar', methods=['GET'])
+def visualizar_perfil() -> tuple[Response, int]:
     if request.method == 'GET':
-        user_id = session.get('user_id')
-        if user_id:
-            user = user_db.find(user_id)
-            return jsonify({"Nome": user['name'], 
-                            "email": user['gmail']})
-        return jsonify({"Erro": 'Efetue login para continuar!'})
-@user_bp.route('/EditUserProfile', methods = ['PUT'])
-def edit_profile() -> tuple[bool, str]:
+        id_usuario = session.get('user_id')
+        if id_usuario:
+            usuario = banco_usuario.find(id_usuario)
+            return jsonify({"nome": usuario['name'],
+                            "email": usuario['gmail']}), 200
+        return jsonify({"Erro": "Efetue login para continuar!"}), 401
+
+
+@usuario_bp.route('/editar', methods=['PUT'])
+def editar_perfil() -> tuple[Response, int]:
     if request.method == 'PUT':
-        user_id = session.get('user_id')
-        if user_id:
-            dados_postman = request.get_json()
-            for key, value in dados_postman.items():
-                resposta, msg = user_service.edit_profile(key, value, user_id)
+        id_usuario = session.get('user_id')
+        if id_usuario:
+            dados = request.get_json()
+            for chave, valor in dados.items():
+                resposta, mensagem = servico_usuario.editar_perfil(chave, valor, id_usuario)
                 if resposta:
-                    return jsonify({"Sucesso": msg})
-                return jsonify({"Erro": msg})
-        return jsonify({"Erro": "Efetue login para prosseguir"})
-        
+                    return jsonify({"Sucesso": mensagem}), 200
+                return jsonify({"Erro": mensagem}), 400
+        return jsonify({"Erro": "Efetue login para prosseguir"}), 401

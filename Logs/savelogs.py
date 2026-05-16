@@ -1,26 +1,31 @@
 """
-Aqui e onde as logs são registradas em arquivos para localizar, encontrar erros
-ou indicar qual metodo obteve sucesso a ser execudado.
+Aqui é onde os logs são registrados em arquivos para localizar erros
+ou indicar qual método foi executado com sucesso.
 """
 from pathlib import Path
 
-LOG_FILE = Path(__file__).parent / "Log.txt"
-class log:
-    """
-    Aqui e onde os registros sao criados para emitir uma mensagem
+ARQUIVO_LOG = Path(__file__).parent / "Log.txt"
 
+
+class Log:
     """
-    def _log(self, msg: str) -> None:
-        raise NotImplementedError("ERRO")
-    def success(self, msg: str) -> str:
-        return self._log(f"Sucess: {msg}")
-    def error(self, msg: str) -> str:
-        return self._log(f"Erro: {msg}")
-class SaveLog(log):
+    Classe base para emitir mensagens de log.
     """
-    Aqui os registros sao salvos e guardados em um arquivo txt
+    def _registrar(self, mensagem: str) -> None:
+        raise NotImplementedError("Erro: método não implementado")
+
+    def sucesso(self, mensagem: str) -> None:
+        self._registrar(f"Sucesso: {mensagem}")
+
+    def erro(self, mensagem: str) -> None:
+        self._registrar(f"Erro: {mensagem}")
+
+
+class SalvarLog(Log):
     """
-    def _log(self, msg: str) -> None:
-        with open(LOG_FILE, 'a', encoding='utf-8') as arquivo:
-            arquivo.write(msg)
+    Salva os registros em um arquivo .txt.
+    """
+    def _registrar(self, mensagem: str) -> None:
+        with open(ARQUIVO_LOG, 'a', encoding='utf-8') as arquivo:
+            arquivo.write(mensagem)
             arquivo.write("\n")

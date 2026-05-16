@@ -1,39 +1,42 @@
 from flask.blueprints import Blueprint
-from app.services.auth_service import Auth
+from flask import request, jsonify, session, Response
+from app.services.auth_service import Autenticacao
 from app.models.user import UserRepository
-from flask import request, jsonify, session
 
-auth_bp = Blueprint('auth', __name__, url_prefix = '/auth')
-auth = Auth()
-db = UserRepository()
-@auth_bp.route('/register', methods = ['POST'])
-def register_user() -> tuple[bool, str]:
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
+autenticacao = Autenticacao()
+banco = UserRepository()
+
+
+@auth_bp.route('/cadastro', methods=['POST'])
+def cadastrar_usuario() -> tuple[Response, int]:
     if request.method == 'POST':
         dados = request.get_json()
         if not dados:
-            return jsonify({"erro": "Body json e obrigatorio"}), 400
+            return jsonify({"Erro": "Body JSON é obrigatório"}), 400
         nome = dados.get('nome')
         email = dados.get('email')
-        senha = dados.get('password')
+        senha = dados.get('senha')
         if not nome or not email or not senha:
-            return jsonify({"erro": "Todos os campos devem estar preenchidos"}), 400
-        reposta, mensagem = auth.register_user(nome, email, senha)
-        if not reposta:
-            return jsonify({"erro": mensagem}), 400
+            return jsonify({"Erro": "Todos os campos devem estar preenchidos"}), 400
+        resposta, mensagem = autenticacao.cadastrar_usuario(nome, email, senha)
+        if not resposta:
+            return jsonify({"Erro": mensagem}), 400
         return jsonify({"Sucesso": mensagem}), 201
-@auth_bp.route('/login', methods = ['POST'])
-def login() -> tuple[bool, str]:
+
+
+@auth_bp.route('/login', methods=['POST'])
+def login() -> tuple[Response, int]:
     if request.method == 'POST':
-        dados_do_usuario = request.get_json()
-        if not dados_do_usuario:
-            return jsonify({"Erro": "Body json e obrigatorio!"}), 400
-        email = dados_do_usuario.get('email')
-        senha = dados_do_usuario.get('senha')
+        dados = request.get_json()
+        if not dados:
+            return jsonify({"Erro": "Body JSON é obrigatório!"}), 400
+        email = dados.get('email')
+        senha = dados.get('senha')
         if not email or not senha:
             return jsonify({"Erro": "Todos os campos devem estar preenchidos!"}), 400
-        user, msg = auth.login(email, senha)
-        if user is None:
-            return jsonify({"Erro": msg}), 401
-        user_id = user.get('id')
-        session['user_id'] = user_id
-        return jsonify({"Sucesso": msg, "user": user_id}), 200
+        usuario, mensagem = autenticacao.login(email, senha)
+        if usuario is None:
+            return jsonify({"Erro": mensagem}), 401
+        session['user_id'] = usuario.get('id')
+        return jsonify({"Sucesso": mensagem, "usuario": usuario.get('id')}), 200

@@ -1,38 +1,43 @@
-from flask.blueprints import Blueprint
 from app.models.user import UserRepository
-from app.services.auth_service import Auth
+from app.services.auth_service import Autenticacao
 import pymysql
-allowed_columns_user = frozenset(('name', 'gmail', 'password'))
-user_bp = Blueprint('user', __name__, url_prefix = 'profile')
-class User():
-    def __init__(self):
-        self.user_db = UserRepository()
-        self.autenticacao = Auth()
-    def edit_profile(self, column, dado, user_id) -> tuple[bool, str]:
-        if column not in allowed_columns_user:
-            return False, 'Coluna nao existente'
-        if dado is None or column is None:
-            return False, 'Nao pode haver campos vazios'
-        if column == 'password':
+
+
+MAPA_CAMPOS_USUARIO = {'nome': 'name', 'email': 'gmail', 'senha': 'password'}
+
+
+class Usuario:
+    def __init__(self) -> None:
+        self.banco_usuario = UserRepository()
+        self.autenticacao = Autenticacao()
+
+    def editar_perfil(self, campo: str, dado: str, id_usuario: int) -> tuple[bool, str]:
+        if dado is None or campo is None:
+            return False, 'Não pode haver campos vazios'
+        coluna = MAPA_CAMPOS_USUARIO.get(campo)
+        if coluna is None:
+            return False, f'Campo {campo} não existe'
+        if coluna == 'password':
             if len(dado) < 6:
-                return False, 'Your passsword is too short'
-            novo_dado = self.autenticacao.password_hash(dado)
+                return False, 'Sua senha é muito curta'
+            novo_dado = self.autenticacao.gerar_hash_senha(dado)
             try:
-                self.user_db.update_user(column, novo_dado, user_id)
+                self.banco_usuario.update_user(coluna, novo_dado, id_usuario)
                 return True, 'Dado alterado com sucesso!'
             except ValueError:
                 return False, 'Ocorreu um erro ao alterar suas informações!'
-        if column == 'gmail':
-            novo_dado = self.autenticacao.check_gmail(dado)
+        if coluna == 'gmail':
+            novo_dado = self.autenticacao.validar_email(dado)
             if not novo_dado:
-                return False, 'The email address you entered is incorrect'
+                return False, 'O email informado é inválido'
             try:
-                self.user_db.update_user(column, novo_dado, user_id)
+                self.banco_usuario.update_user(coluna, novo_dado, id_usuario)
                 return True, 'Dado alterado com sucesso!'
             except ValueError:
-                return False, f'Column {column} dont exist'
+                return False, f'Campo {campo} não existe'
             except pymysql.err.IntegrityError:
-                return False, 'Gmail already exists'
-        if column == 'name':
-            self.user_db.update_user(column, dado, user_id)
+                return False, 'Email já cadastrado'
+        if coluna == 'name':
+            self.banco_usuario.update_user(coluna, dado, id_usuario)
             return True, 'Dado alterado com sucesso!'
+        return False, 'Não foi possível atualizar o perfil'
