@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <title>TaskFlow</title>
+    <title>TaskFlow - Login</title>
 </head>
 <body>
     <header>
@@ -14,14 +14,14 @@
         <h2>Login</h2>
         <form action="/auth/login" method="POST">
             <label for="email">E-mail</label>
-            <input type="email" id="email" name="email" placeholder="E-mail" required>
+            <input type="email" id="email" name="email" placeholder="Insira seu E-mail" required>
             
             <label for="senha">Senha</label>
-            <input type="password" id="senha" name="senha" placeholder="Senha" required>
+            <input type="password" id="senha" name="senha" placeholder="Insira sua Senha" required>
 
             <button type="submit">Entrar</button>
         </form>
-        <p>Ainda não tem uma conta?<a href="/auth/cadastro"> Cadastrar-se</a></p>
+        <p>Ainda não tem uma conta?<a href="{{url_for('auth.login')}}"> Cadastrar-se</a></p>
     </main>
     <footer>
         <p>TaskFlow &copy; 2026</p>
