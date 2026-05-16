@@ -1,5 +1,5 @@
 from flask.blueprints import Blueprint
-from flask import request, jsonify, session, Response, render_template, redirect
+from flask import request, jsonify, session, Response, render_template, redirect, flash, url_for
 from app.services.auth_service import Autenticacao
 from app.models.user import UserRepository
 
@@ -8,18 +8,21 @@ autenticacao = Autenticacao()
 banco = UserRepository()
 
 
-@auth_bp.route('/cadastro', methods=['POST'])
+@auth_bp.route('/cadastro', methods=['GET', 'POST'])
 def cadastrar_usuario() -> tuple[Response, int]:
     if request.method == 'POST':
         nome = request.form.get('nome')
         email = request.form.get('email')
         senha = request.form.get('senha')
         if not nome or not email or not senha:
-            return jsonify({"Erro": "Todos os campos devem estar preenchidos"}), 400
+            flash("Não pode haver campos em branco", "Erro")
+            return redirect(url_for('auth.cadastrar_usuario'))
         resposta, mensagem = autenticacao.cadastrar_usuario(nome, email, senha)
         if not resposta:
-            return jsonify({"Erro": mensagem}), 400
-        return jsonify({"Sucesso": mensagem}), 201
+            flash(mensagem, "Erro")
+            return redirect(url_for('auth.cadastrar_usuario'))
+        flash(mensagem, "Sucesso")
+        return redirect(url_for('auth.login'))
     return render_template('registro.html')
 
 

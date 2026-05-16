@@ -34,7 +34,7 @@ class Autenticacao:
             senha_hash = self.gerar_hash_senha(senha)
             self.banco_dados.insert(nome, email, senha_hash)
             self.logs.sucesso(f"Cadastro realizado: {email}")
-            return True, "Cadastro realizado com sucesso"
+            return True, "Cadastro realizado com sucesso, Efetue login!"
         except ValueError:
             return False, "Email já existente!"
 

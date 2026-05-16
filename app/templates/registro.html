@@ -11,7 +11,7 @@
     </header>
     <main>
         <p>Registrar-se</p>
-        <form action="/auth/cadastro">
+        <form action="/auth/cadastro", method="POST">
             <label for="nome">Nome</label>
             <input type="text" id="nome" name="nome" placeholder="Nome de usuario" required>
 
@@ -23,7 +23,7 @@
 
             <button type="submit">Cadastrar-se</button>
         </form>
-        <p>Ja tem uma conta?<a href="{{url_for('auth.cadastrar_usuario')}}">Efetuar login</a></p>
+        <p>Ja tem uma conta?<a href="{{url_for('auth.login')}}">Efetuar login</a></p>
     </main>
 </body>
 </html>

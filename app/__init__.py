@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from .config import Config
 from .routes.auth_route import auth_bp
 from .routes.task_route import tarefa_bp
@@ -11,4 +11,7 @@ def create_app() -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(tarefa_bp)
     app.register_blueprint(usuario_bp)
+    @app.route('/')
+    def homepage():
+        return render_template('index.html')
     return app

@@ -1,12 +1,11 @@
 from flask.blueprints import Blueprint
-from flask import request, jsonify, session, Response
+from flask import request, jsonify, session, Response, render_template
 from app.models.user import UserRepository
 from app.services.user_service import Usuario
 
 usuario_bp = Blueprint('usuario', __name__, url_prefix='/perfil')
 banco_usuario = UserRepository()
 servico_usuario = Usuario()
-
 
 @usuario_bp.route('/visualizar', methods=['GET'])
 def visualizar_perfil() -> tuple[Response, int]:
