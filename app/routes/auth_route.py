@@ -26,18 +26,18 @@ def cadastrar_usuario() -> tuple[Response, int]:
     return render_template('registro.html')
 
 
-@auth_bp.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login() -> tuple[Response, int]:
     if request.method == 'POST':
-        dados = request.get_json()
-        if not dados:
-            return jsonify({"Erro": "Body JSON é obrigatório!"}), 400
-        email = dados.get('email')
-        senha = dados.get('senha')
+        email = request.form.get('email')
+        senha = request.form.get('senha')
         if not email or not senha:
-            return jsonify({"Erro": "Todos os campos devem estar preenchidos!"}), 400
+            flash("Não pode haver campos em branco", "Erro")
+            redirect(url_for('auth.login'))
         usuario, mensagem = autenticacao.login(email, senha)
         if usuario is None:
-            return jsonify({"Erro": mensagem}), 401
+            flash(mensagem, "Erro")
+            return redirect(url_for('auth.login'))
         session['user_id'] = usuario.get('id')
-        return jsonify({"Sucesso": mensagem, "usuario": usuario.get('id')}), 200
+        return redirect(url_for('homepage'))
+    return render_template('login.html')

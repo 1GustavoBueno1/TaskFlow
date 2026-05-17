@@ -23,6 +23,15 @@
 
             <button type="submit">Cadastrar-se</button>
         </form>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            <ul class="flashes">
+                {% for categoria, message in messages %}
+                <li class="flash-{{ categoria|lower }}">{{message}}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
         <p>Ja tem uma conta?<a href="{{url_for('auth.login')}}">Efetuar login</a></p>
     </main>
 </body>

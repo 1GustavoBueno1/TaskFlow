@@ -21,7 +21,18 @@
 
             <button type="submit">Entrar</button>
         </form>
-        <p>Ainda não tem uma conta?<a href="{{url_for('auth.login')}}"> Cadastrar-se</a></p>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            <ul class="flashes">
+                {% for categoria, message in messages %}
+                <li class="flash-{{ categoria|lower }}">
+                    {{message}}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+        <p>Ainda não tem uma conta?<a href="{{url_for('auth.cadastrar_usuario')}}"> Cadastrar-se</a></p>
     </main>
     <footer>
         <p>TaskFlow &copy; 2026</p>

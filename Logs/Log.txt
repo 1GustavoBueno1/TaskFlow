@@ -42,3 +42,8 @@ Sucess: Success to login: gustavo301@gmail.com
 Sucess: Success to login: gustavo301@gmail.com
 Sucess: Success to login: gustavo301@gmail.com
 Sucesso: Cadastro realizado: teste@gmail.com
+Sucesso: Login realizado com sucesso: teste@gmail.com
+Sucesso: Login realizado com sucesso: teste@gmail.com
+Sucesso: Login realizado com sucesso: teste@gmail.com
+Sucesso: Login realizado com sucesso: teste@gmail.com
+Sucesso: Login realizado com sucesso: teste@gmail.com
