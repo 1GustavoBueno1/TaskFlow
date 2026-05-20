@@ -11,8 +11,8 @@ class Tarefas:
     def listar_tarefas(self, id_usuario: int) -> tuple[bool, str | list]:
         tarefas = self.banco_tarefa.show_tasks(id_usuario)
         if tarefas:
-            return True, tarefas
-        return False, 'Você não possui tarefas para visualizar'
+            return tarefas
+        return False
 
     def editar_tarefas(self, campo: str, novo_dado: str, id_tarefa: int, id_usuario: int) -> tuple[bool, str]:
         if campo is None or novo_dado is None or id_tarefa is None or id_usuario is None:

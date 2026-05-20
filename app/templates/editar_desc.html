@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskflow editando tarefa</title>
+</head>
+<body>
+    <header>
+        <h1>Editando descrição</h1>
+    </header>
+    <form action="{{url_for('tarefa.editar_desc_da_tarefa', id_tarefa=id_tarefa)}}" method="POST"># coninuar aqui
+        <label for="descrição">descrição</label>
+        <input type="text" name="descrição" id="descrição" placeholder="Insira a nova descrição" required>
+        <button type="submit">Confirmar</button>
+
+    </form>
+</body>
+</html>

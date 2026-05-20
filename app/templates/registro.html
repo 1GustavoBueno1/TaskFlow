@@ -11,7 +11,7 @@
     </header>
     <main>
         <p>Registrar-se</p>
-        <form action="/auth/cadastro", method="POST">
+        <form action="/auth/cadastro" method="POST">
             <label for="nome">Nome</label>
             <input type="text" id="nome" name="nome" placeholder="Nome de usuario" required>
 
@@ -27,7 +27,9 @@
             {% if messages %}
             <ul class="flashes">
                 {% for categoria, message in messages %}
-                <li class="flash-{{ categoria|lower }}">{{message}}</li>
+                <li class="flash-{{ categoria|lower }}">
+                    {{message}}
+                </li>
                 {% endfor %}
             </ul>
             {% endif %}

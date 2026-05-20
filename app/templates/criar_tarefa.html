@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow criar tarefa</title>
+</head>
+<body>
+    <header>
+        <h1>Criando tarefa</h1>
+    </header>
+    <main>
+        <form action="/tarefa/criar" method="POST">
+            <label for="Nome_da_tarefa">Nome da tarefa</label>
+            <input type="text" name="nome" id="nome" placeholder="Nome da tarefa" required>
+
+            <label for="Descrição_da_tarefa">Descrição da tarefa</label>
+            <input type="text" name="descrição" id="descrição" placeholder="Descrição da tarefa" required>
+
+             <button type="submit">Criar tarefa</button>
+        </form>
+        {% with messages = get_flashed_messages(with_categories = True) %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for categoria, message in messages %}
+                        <li class="flash-{{ categoria|lower }}"> {{message}}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+    </main>
+</body>
+</html>

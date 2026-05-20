@@ -1,5 +1,5 @@
 from flask.blueprints import Blueprint
-from flask import request, jsonify, session, Response, render_template
+from flask import request, jsonify, session, Response, render_template, redirect, url_for
 from app.models.user import UserRepository
 from app.services.user_service import Usuario
 
@@ -13,10 +13,9 @@ def visualizar_perfil() -> tuple[Response, int]:
         id_usuario = session.get('user_id')
         if id_usuario:
             usuario = banco_usuario.find(id_usuario)
-            return jsonify({"nome": usuario['name'],
-                            "email": usuario['gmail']}), 200
-        return jsonify({"Erro": "Efetue login para continuar!"}), 401
-
+            return render_template('perfil.html', dados_do_perfil = usuario)
+        return redirect(url_for('homepage'))
+        
 
 @usuario_bp.route('/editar', methods=['PUT'])
 def editar_perfil() -> tuple[Response, int]:

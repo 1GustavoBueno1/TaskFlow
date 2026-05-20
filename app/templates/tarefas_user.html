@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow tarefas</title>
+</head>
+<body>
+    <header>
+        <h1>Tarefas do usuario</h1>
+    </header>
+    <main>
+        {% if tarefas %}
+            {% for tarefa in tarefas %}
+                <p>Nome: {{tarefa['name']}} - <a href="">Editar nome</a></p>
+                <p>Descrição: {{tarefa['description']}} - <a href="{{url_for('tarefa.editar_desc_da_tarefa', id_tarefa=tarefa['id'])}}">Editar descrição</a></p>
+                <p>Status: {{tarefa['status']}} - <a href="">Alterar status</a></p>
+                <hr>
+            {% endfor %}
+        {% else %}
+            <p>Você não possui tarefas ativas no momento</p>
+        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=True) %}
+            {% if messages %}
+            <ul class="flashes">
+                {% for categoria, message in messages %}
+                <li class="flash-{{ categoria|lower }}">
+                    {{message}}
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+        <a href="/tarefa/criar">Criar tarefas</a>
+    </main>
+</body>
+</html>
