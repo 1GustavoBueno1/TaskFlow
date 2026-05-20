@@ -1,7 +1,7 @@
 from app.models.task import TaskRepository
 
 
-MAPA_CAMPOS_TAREFA = {'nome': 'name', 'descricao': 'description', 'status': 'status'}
+MAPA_CAMPOS_TAREFA = frozenset(['name', 'description', 'status'])
 
 
 class Tarefas:
@@ -17,11 +17,10 @@ class Tarefas:
     def editar_tarefas(self, campo: str, novo_dado: str, id_tarefa: int, id_usuario: int) -> tuple[bool, str]:
         if campo is None or novo_dado is None or id_tarefa is None or id_usuario is None:
             return False, 'Não pode haver campos em branco!'
-        coluna = MAPA_CAMPOS_TAREFA.get(campo)
-        if coluna is None:
+        if campo not in MAPA_CAMPOS_TAREFA:
             return False, f'Campo {campo} não existe'
         try:
-            self.banco_tarefa.update_task(coluna, novo_dado, id_usuario, id_tarefa)
+            self.banco_tarefa.update_task(campo, novo_dado, id_usuario, id_tarefa)
             return True, 'Tarefa atualizada com sucesso!'
         except ValueError:
             return False, f'Campo {campo} não existe'
