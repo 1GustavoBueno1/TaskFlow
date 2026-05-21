@@ -28,7 +28,7 @@ def deletar_tarefa(id_tarefa) -> tuple[Response, int]:
                 flash(mensagem, 'suscesso')
                 return render_template('tarefas_user.html')
             flash(mensagem, 'erro')
-            return redirect(url_for('listar_tarefas')), 400
+            return render_template('tarefas_user.html'), 400
         flash("Efetue login para prosseguir", "erro")
         return redirect(url_for('homepage')), 400
     return render_template('tarefas_user.html'), 401
