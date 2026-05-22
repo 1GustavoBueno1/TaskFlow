@@ -28,43 +28,26 @@ def deletar_tarefa(id_tarefa) -> tuple[Response, int]:
                 flash(mensagem, 'suscesso')
                 return render_template('tarefas_user.html')
             flash(mensagem, 'erro')
-            return render_template('tarefas_user.html'), 400
+            return render_template('tarefas_user.html')
         flash("Efetue login para prosseguir", "erro")
-        return redirect(url_for('homepage')), 400
-    return render_template('tarefas_user.html'), 401
+        return redirect(url_for('homepage'))
+    return render_template('tarefas_user.html')
 
-@tarefa_bp.route('/editar/desc/<int:id_tarefa>', methods=['GET', 'POST'])
-def editar_desc_da_tarefa(id_tarefa) -> tuple[Response, int]:
+@tarefa_bp.route('/editar/<int:id_tarefa>/<coluna>', methods=['GET', 'POST'])
+def editar_tarefa(id_tarefa, coluna) -> tuple[Response, int]:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
-            desc = request.form.get('descrição')
-            resposta, mensagem = servico_tarefa.editar_tarefas('description', desc, id_tarefa, id_usuario)
+            novo_dado = request.form.get(coluna)
+            resposta, mensagem = servico_tarefa.editar_tarefas(coluna, novo_dado, id_tarefa, id_usuario)
             if resposta:
                 flash(mensagem, 'sucesso')
-                return redirect(url_for('tarefa.listar_tarefas')), 200
+                return redirect(url_for('tarefa.listar_tarefas'))
             flash(mensagem, 'erro')
-            return redirect(url_for('tarefa.editar_desc_da_tarefa', id_tarefa=id_tarefa)), 400
+            return redirect(url_for('tarefa.editar_tarefa', id_tarefa=id_tarefa, coluna = coluna))
         flash("Efetue login para prosseguir", 'erro')
-        return redirect(url_for('homepage')), 401
-    return render_template('editar_desc.html', id_tarefa=id_tarefa)
-
-# @tarefa_bp.route('/editar', methods=['PUT'])
-# def alterar_status_da_tarefa() -> tuple[Response, int]:
-#     if request.method == 'PUT':
-#         id_usuario = session.get('user_id')
-#         if id_usuario:
-#             dados = request.get_json()
-#             id_tarefa = dados.get('id_tarefa')
-#             for chave, valor in dados.items():
-#                 if chave == 'id_tarefa':
-#                     continue
-#                 resposta, mensagem = servico_tarefa.editar_tarefas(chave, valor, id_tarefa, id_usuario)
-#                 if resposta:
-#                     return jsonify({'Sucesso': mensagem}), 200
-#                 return jsonify({'Erro': mensagem}), 400
-#         return jsonify({'Erro': 'Efetue login para prosseguir!'}), 401
-
+        return redirect(url_for('homepage'))
+    return render_template('editar_desc.html', id_tarefa=id_tarefa, coluna = coluna)
 
 @tarefa_bp.route('/criar', methods=['GET', 'POST'])
 def criar_tarefa() -> tuple[Response, int]:
@@ -76,10 +59,10 @@ def criar_tarefa() -> tuple[Response, int]:
             resposta, mensagem = servico_tarefa.criar_tarefa(nome, descricao, id_usuario)
             if resposta:
                 tarefas = servico_tarefa.listar_tarefas(id_usuario)
-                flash(mensagem, 'sucesso'), 201
-                return redirect(url_for('tarefa.listar_tarefas')), 201
+                flash(mensagem, 'sucesso')
+                return redirect(url_for('tarefa.listar_tarefas'))
             flash(mensagem, 'erro')
-            return redirect(url_for('tarefa.listar_tarefas')), 400
-        flash("Efetue login para continuar", 'erro'), 400
-        return redirect(url_for('homepage')), 401
+            return redirect(url_for('tarefa.listar_tarefas'))
+        flash("Efetue login para continuar", 'erro')
+        return redirect(url_for('homepage'))
     return render_template('criar_tarefa.html')
