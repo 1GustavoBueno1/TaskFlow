@@ -2,6 +2,7 @@ from app.models.task import TaskRepository
 
 
 MAPA_CAMPOS_TAREFA = frozenset(['name', 'description', 'status'])
+MAPA_CAMPOS_STATUS = frozenset(["pendente", "concluida"])
 
 
 class Tarefas:
@@ -19,6 +20,9 @@ class Tarefas:
             return False, 'Não pode haver campos em branco!'
         if campo not in MAPA_CAMPOS_TAREFA:
             return False, f'Campo {campo} não existe'
+        if campo == 'status':
+            if novo_dado not in MAPA_CAMPOS_STATUS:
+                return False, f'{novo_dado} não e uma das opções'
         try:
             self.banco_tarefa.update_task(campo, novo_dado, id_usuario, id_tarefa)
             return True, 'Tarefa atualizada com sucesso!'
