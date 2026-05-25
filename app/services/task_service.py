@@ -8,7 +8,7 @@ class Tarefas:
     def __init__(self) -> None:
         self.banco_tarefa = TaskRepository()
 
-    def listar_tarefas(self, id_usuario: int) -> tuple[bool, str | list]:
+    def listar_tarefas(self, id_usuario: int) -> list | bool:
         tarefas = self.banco_tarefa.show_tasks(id_usuario)
         if tarefas:
             return tarefas
