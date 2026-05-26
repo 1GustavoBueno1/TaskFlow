@@ -27,7 +27,7 @@ class UserRepository:
         with Config.get_connection() as connection:
             with connection.cursor() as cursor:
                 cursor.execute(
-                    'SELECT id, name, gmail FROM Users WHERE id = %s',
+                    'SELECT id, name, gmail, password FROM Users WHERE id = %s',
                     (id_usuario,)
                 )
                 return cursor.fetchone()

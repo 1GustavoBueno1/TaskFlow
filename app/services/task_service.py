@@ -2,7 +2,7 @@ from app.models.task import TaskRepository
 
 
 MAPA_CAMPOS_TAREFA = frozenset(['name', 'description', 'status'])
-MAPA_CAMPOS_STATUS = frozenset(["pendente", "concluida"])
+MAPA_CAMPOS_STATUS = frozenset(["pendente", "concluida"])# passar para auth
 
 
 class Tarefas:

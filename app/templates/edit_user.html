@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow</title>
+</head>
+<body>
+    <header>
+        <h1>Editando Perfil</h1>
+    </header>
+    <main>
+        <form action="{{url_for('usuario.editar_perfil', coluna = coluna)}}" method="POST">
+            <label for="{{coluna}}">{{coluna}}</label>
+            <input type="text" name="{{coluna}}" id="{{coluna}}" placeholder="Insira a novo(a) {{coluna}}" required>
+
+            <label for="senha">senha</label>
+            <input type="password" name="password" id="password" placeholder="Para confirmar mudança insira sua senha" required>
+            
+            <button type="submit">Trocar</button>
+        </form>
+    </main>
+</body>
+</html>

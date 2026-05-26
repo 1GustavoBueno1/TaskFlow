@@ -1,5 +1,5 @@
 from flask.blueprints import Blueprint
-from flask import request, jsonify, session, Response, render_template, redirect, url_for
+from flask import request, jsonify, session, Response, render_template, redirect, url_for, flash
 from app.models.user import UserRepository
 from app.services.user_service import Usuario
 
@@ -15,17 +15,22 @@ def visualizar_perfil() -> tuple[Response, int]:
             usuario = banco_usuario.find(id_usuario)
             return render_template('perfil.html', dados_do_perfil = usuario)
         return redirect(url_for('homepage'))
-        
 
-@usuario_bp.route('/editar', methods=['PUT'])
-def editar_perfil() -> tuple[Response, int]:
-    if request.method == 'PUT':
+
+@usuario_bp.route('/editar/<coluna>', methods=['GET', 'POST'])
+def editar_perfil(coluna) -> tuple[Response, int]:
+    if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
-            dados = request.get_json()
-            for chave, valor in dados.items():
-                resposta, mensagem = servico_usuario.editar_perfil(chave, valor, id_usuario)
-                if resposta:
-                    return jsonify({"Sucesso": mensagem}), 200
-                return jsonify({"Erro": mensagem}), 400
-        return jsonify({"Erro": "Efetue login para prosseguir"}), 401
+            novo_dado = request.form.get(coluna)
+            user_senha = request.form.get('password')
+            usuario = banco_usuario.find(id_usuario)
+            resposta, mensagem = servico_usuario.editar_perfil(coluna, novo_dado, user_senha, id_usuario, usuario)
+            if resposta:
+                flash(mensagem, 'sucesso')
+                return redirect(url_for('usuario.visualizar_perfil'))
+            flash(mensagem, 'erro')
+            return redirect(url_for('usuario.visualizar_perfil'))
+        flash(mensagem, 'erro')
+        return redirect(url_for('homepage'))
+    return render_template('edit_user.html', coluna = coluna)
