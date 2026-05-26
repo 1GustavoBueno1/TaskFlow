@@ -22,8 +22,9 @@
                         </select>
                     </form>
                 </p>
-                <form action="{{url_for('tarefa.deletar_tarefa', id_tarefa=tarefa['id'])}}" method="POST" onsubmit="return confirm('Você deseja realmente deletar a tarefa?')">
-                    <button type="submit" class="btn-delete">Deletar</button>
+                <form action="{{url_for('tarefa.deletar_tarefa', id_tarefa=tarefa['id'])}}" method="POST" onsubmit="return confirm('Deseja deletar essa tarefa?')">   <label for="password">senha</label>
+                    <input type="password" name="password" id="password" placeholder="Insira sua senha" required>
+                    <button type="submit">Deletar</button>
                 </form>
                 <hr>
             {% endfor %}

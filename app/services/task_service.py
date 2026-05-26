@@ -1,13 +1,14 @@
 from app.models.task import TaskRepository
-
-
+from app.services.auth_service import Autenticacao
+autenticacao = Autenticacao()
 MAPA_CAMPOS_TAREFA = frozenset(['name', 'description', 'status'])
-MAPA_CAMPOS_STATUS = frozenset(["pendente", "concluida"])# passar para auth
+MAPA_CAMPOS_STATUS = frozenset(["pendente", "concluida"])
 
 
 class Tarefas:
     def __init__(self) -> None:
         self.banco_tarefa = TaskRepository()
+        self.auth = Autenticacao()
 
     def listar_tarefas(self, id_usuario: int) -> list | bool:
         tarefas = self.banco_tarefa.show_tasks(id_usuario)
@@ -29,9 +30,11 @@ class Tarefas:
         except ValueError:
             return False, f'Campo {campo} não existe'
 
-    def deletar_tarefa(self, id_tarefa: int, id_usuario: int) -> tuple[bool, str]:
+    def deletar_tarefa(self, id_tarefa: int, id_usuario: int, usuario:dict, senha_user:str) -> tuple[bool, str]:
         if id_tarefa is None or id_usuario is None:
             return False, 'Não pode haver campos em branco!'
+        if not self.auth.verificar_senha(senha_user, usuario['password']):
+            return False, 'Senha incorreta'
         linhas_afetadas = self.banco_tarefa.del_task(id_usuario, id_tarefa)
         if linhas_afetadas >= 1:
             return True, 'Tarefa deletada com sucesso!'

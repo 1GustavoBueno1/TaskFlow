@@ -2,9 +2,12 @@ from flask.blueprints import Blueprint
 from flask import request, session, jsonify, Response, render_template, redirect, url_for, flash
 from app.models.task import TaskRepository
 from app.services.task_service import Tarefas
+from app.services.user_service import UserRepository
+
 
 tarefa_bp = Blueprint('tarefa', __name__, url_prefix='/tarefa')
 banco_tarefa = TaskRepository()
+banco_user = UserRepository()
 servico_tarefa = Tarefas()
 
 
@@ -23,7 +26,9 @@ def deletar_tarefa(id_tarefa) -> tuple[Response, int]:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
-            resposta, mensagem = servico_tarefa.deletar_tarefa(id_tarefa, id_usuario)
+            usuario = banco_user.find(id_usuario)
+            senha_usuario = request.form.get('password')
+            resposta, mensagem = servico_tarefa.deletar_tarefa(id_tarefa, id_usuario, usuario, senha_usuario)
             if resposta:
                 flash(mensagem, 'suscesso')
                 return render_template('tarefas_user.html')
