@@ -30,10 +30,10 @@ def deletar_tarefa(id_tarefa) -> tuple[Response, int]:
             senha_usuario = request.form.get('password')
             resposta, mensagem = servico_tarefa.deletar_tarefa(id_tarefa, id_usuario, usuario, senha_usuario)
             if resposta:
-                flash(mensagem, 'suscesso')
-                return render_template('tarefas_user.html')
+                flash(mensagem, 'sucesso')
+                return redirect(url_for('tarefa.listar_tarefas'))
             flash(mensagem, 'erro')
-            return render_template('tarefas_user.html')
+            return redirect(url_for('tarefa.listar_tarefas'))
         flash("Efetue login para prosseguir", "erro")
         return redirect(url_for('homepage'))
     return render_template('tarefas_user.html')
