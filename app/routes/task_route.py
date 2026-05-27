@@ -18,7 +18,7 @@ def listar_tarefas() -> tuple[Response, int]:
         if id_usuario:
             tarefas = servico_tarefa.listar_tarefas(id_usuario)
             return render_template('tarefas_user.html', tarefas = tarefas)
-        return render_template('homepage')
+        return redirect(url_for('homepage'))
 
 
 @tarefa_bp.route('/editar/deletar/<int:id_tarefa>', methods=['GET', 'POST'])
