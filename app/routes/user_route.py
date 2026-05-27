@@ -31,6 +31,6 @@ def editar_perfil(coluna) -> tuple[Response, int]:
                 return redirect(url_for('usuario.visualizar_perfil'))
             flash(mensagem, 'erro')
             return redirect(url_for('usuario.visualizar_perfil'))
-        flash(mensagem, 'erro')
+        flash("efetue login para prosseguir", 'erro')
         return redirect(url_for('homepage'))
     return render_template('edit_user.html', coluna = coluna)
