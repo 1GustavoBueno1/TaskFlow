@@ -3,7 +3,10 @@ from .config import Config
 from .routes.auth_route import auth_bp
 from .routes.task_route import tarefa_bp
 from .routes.user_route import usuario_bp
-
+from .models.task import TaskRepository
+from .models.user import UserRepository
+table_user = UserRepository()
+table_task = TaskRepository()
 
 def create_app() -> Flask:
     app = Flask(__name__)
@@ -11,6 +14,8 @@ def create_app() -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(tarefa_bp)
     app.register_blueprint(usuario_bp)
+    table_task.create_table_tasks()
+    table_user.create_table_users()
     @app.route('/')
     def homepage():
         user_id = session.get('user_id')

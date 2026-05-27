@@ -15,7 +15,7 @@ class TaskRepository:
                         'id INT NOT NULL AUTO_INCREMENT,'
                         'name VARCHAR(150) NOT NULL, '
                         'description VARCHAR(150),'
-                        'status VARCHAR(50) DEFAULT "Outstanding", '
+                        'status VARCHAR(50) DEFAULT "pendente", '
                         'user_id INT NOT NULL, '
                         'PRIMARY KEY (id), '
                         'CONSTRAINT fk_user_id FOREIGN KEY (user_id) '
