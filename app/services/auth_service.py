@@ -44,7 +44,7 @@ class Autenticacao:
         usuario = self.banco_dados.login(email)
         if not usuario:
             return None, "Credenciais inválidas!"
-        if self.verificar_senha(senha, usuario):
+        if self.verificar_senha(senha, usuario['password']):
             self.logs.sucesso(f"Login realizado com sucesso: {email}")
             return usuario, "Login realizado com sucesso"
         self.logs.erro(f"Acesso negado: {email}")
