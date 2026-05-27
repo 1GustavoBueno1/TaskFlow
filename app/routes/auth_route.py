@@ -34,6 +34,7 @@ def login() -> tuple[Response, int]:
         if not email or not senha:
             flash("Não pode haver campos em branco", "erro")
             redirect(url_for('auth.login'))
+            return
         usuario, mensagem = autenticacao.login(email, senha)
         if usuario is None:
             flash(mensagem, "erro")
