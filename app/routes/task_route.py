@@ -1,5 +1,5 @@
 from flask.blueprints import Blueprint
-from flask import request, session, jsonify, Response, render_template, redirect, url_for, flash
+from flask import request, session, Response, render_template, redirect, url_for, flash
 from app.models.task import TaskRepository
 from app.services.task_service import Tarefas
 from app.services.user_service import UserRepository

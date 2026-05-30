@@ -1,12 +1,12 @@
 from flask.blueprints import Blueprint
-from flask import request, jsonify, session, Response, render_template, redirect, url_for, flash
+from flask import request, session, Response, render_template, redirect, url_for, flash
 from app.models.user import UserRepository
 from app.services.user_service import Usuario
 
 usuario_bp = Blueprint('usuario', __name__, url_prefix='/perfil')
 banco_usuario = UserRepository()
 servico_usuario = Usuario()
-
+#Collecting Flask-WTF
 @usuario_bp.route('/visualizar', methods=['GET'])
 def visualizar_perfil() -> tuple[Response, int]:
     if request.method == 'GET':
@@ -23,7 +23,7 @@ def editar_perfil(coluna) -> tuple[Response, int]:
         id_usuario = session.get('user_id')
         if id_usuario:
             novo_dado = request.form.get(coluna)
-            user_senha = request.form.get('password')
+            user_senha = request.form.get('password1')
             usuario = banco_usuario.find(id_usuario)
             resposta, mensagem = servico_usuario.editar_perfil(coluna, novo_dado, user_senha, id_usuario, usuario)
             if resposta:
