@@ -14,9 +14,6 @@ def cadastrar_usuario():
         nome = request.form.get('nome')
         email = request.form.get('email')
         senha = request.form.get('senha')
-        if not nome or not email or not senha:
-            flash("Não pode haver campos em branco", "erro")
-            return redirect(url_for('auth.cadastrar_usuario'))
         resposta, mensagem = autenticacao.cadastrar_usuario(nome, email, senha)
         if not resposta:
             flash(mensagem, "erro")

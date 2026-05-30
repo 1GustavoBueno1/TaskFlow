@@ -26,8 +26,8 @@ class Autenticacao:
         return bcrypt.checkpw(senha.encode(), usuario_password.encode())
 
     def cadastrar_usuario(self, nome: str, email: str, senha: str) -> tuple[bool, str]:
-        if not nome:
-            return False, "O campo nome não pode estar vazio"
+        if nome is None or email is None or senha is None:
+            return False, "Não pode haver campos em branco"
         if len(senha) < 6:
             return False, "Sua senha é muito curta!"
         if not self.validar_email(email):
