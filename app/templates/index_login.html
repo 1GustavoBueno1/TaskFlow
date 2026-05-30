@@ -11,6 +11,7 @@
     <p>Seja bem vindo {{nome_de_usuario}} oque vamos fazer hoje?</p>
     <a href="/tarefa/listar">Ver suas tarefas</a>
     <a href="/perfil/visualizar">Ver perfil</a>
+    <a href="/perfil/sair">Sair da conta</a>
     {% with messages = get_flashed_messages(with_categories=True) %}
             {% if messages %}
             <ul class="flashes">

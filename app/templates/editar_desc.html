@@ -10,6 +10,7 @@
         <h1>Editando tarefa</h1>
     </header>
     <form action="{{url_for('tarefa.editar_tarefa', id_tarefa=id_tarefa, coluna = coluna)}}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label for="{{coluna}}">{{coluna}}</label>
         <input type="text" name="{{coluna}}" id="{{coluna}}" placeholder="Editando {{coluna}}" required>
         <button type="submit">Confirmar</button>

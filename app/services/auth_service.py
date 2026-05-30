@@ -53,3 +53,10 @@ class Autenticacao:
             return usuario, "Login realizado com sucesso"
         self.logs.erro(f"Acesso negado: {email}")
         return None, "Credenciais inválidas!"
+    
+    def sair(self, senha_user: str, senha_correta: dict):
+        if senha_correta is None or senha_user is None:
+            return False, 'Não pode haver campos em branco'
+        if self.verificar_senha(senha_user, senha_correta['password']):
+            return True, 'Logout efetuado com sucesso'
+        return False, 'Algo deu errado, tente novamente'

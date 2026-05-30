@@ -12,6 +12,7 @@
     <main>
         <p>Registrar-se</p>
         <form action="/auth/cadastro" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <label for="nome">Nome</label>
             <input type="text" id="nome" name="nome" placeholder="Nome de usuario" required>
 
