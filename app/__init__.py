@@ -1,4 +1,5 @@
 from flask import Flask, render_template, session
+from flask_wtf import CSRFProtect
 from .config import Config
 from .routes.auth_route import auth_bp
 from .routes.task_route import tarefa_bp
@@ -7,10 +8,11 @@ from .models.task import TaskRepository
 from .models.user import UserRepository
 table_user = UserRepository()
 table_task = TaskRepository()
-
+csrf = CSRFProtect()
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(Config)
+    csrf.init_app(app)
     app.register_blueprint(auth_bp)
     app.register_blueprint(tarefa_bp)
     app.register_blueprint(usuario_bp)

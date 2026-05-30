@@ -20,7 +20,9 @@ class Autenticacao:
     def gerar_hash_senha(self, senha: str) -> str:
         return bcrypt.hashpw(senha.encode(), bcrypt.gensalt()).decode('utf-8')
 
-    def verificar_senha(self, senha: str, usuario_password: dict) -> bool:
+    def verificar_senha(self, senha: str, usuario_password: str) -> bool:
+        if senha is None or usuario_password is None:
+            return False
         return bcrypt.checkpw(senha.encode(), usuario_password.encode())
 
     def cadastrar_usuario(self, nome: str, email: str, senha: str) -> tuple[bool, str]:
