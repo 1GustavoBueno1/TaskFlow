@@ -21,7 +21,7 @@ class Usuario:
         if campo is None:
             return False, f'Campo {campo} não existe'
         if campo == 'password':
-            if len(dado) < 6:
+            if len(dado) < 8:
                 return False, 'Sua senha é muito curta'
             novo_dado = self.autenticacao.gerar_hash_senha(dado)
             try:

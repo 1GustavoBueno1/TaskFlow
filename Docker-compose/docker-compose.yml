@@ -13,7 +13,7 @@ services:
       - --innodb_force_recovery=0
       - --authentication-policy=mysql_native_password
     volumes: 
-      - C:/Users/Gustavo/Documents/SistemaDeCadastro/MySql:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     ports:
       - 3307:3306
     environment:

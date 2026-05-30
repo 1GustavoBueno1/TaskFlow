@@ -2,7 +2,7 @@ from flask.blueprints import Blueprint
 from flask import request, session, Response, render_template, redirect, url_for, flash
 from app.models.task import TaskRepository
 from app.services.task_service import Tarefas
-from app.services.user_service import UserRepository
+from app.models.user import UserRepository
 
 
 tarefa_bp = Blueprint('tarefa', __name__, url_prefix='/tarefa')
@@ -63,7 +63,6 @@ def criar_tarefa() -> tuple[Response, int]:
             descricao = request.form.get('descrição')
             resposta, mensagem = servico_tarefa.criar_tarefa(nome, descricao, id_usuario)
             if resposta:
-                tarefas = servico_tarefa.listar_tarefas(id_usuario)
                 flash(mensagem, 'sucesso')
                 return redirect(url_for('tarefa.listar_tarefas'))
             flash(mensagem, 'erro')
