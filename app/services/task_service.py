@@ -11,6 +11,8 @@ class Tarefas:
         self.auth = Autenticacao()
 
     def listar_tarefas(self, id_usuario: int) -> list | bool:
+        if id_usuario is None:
+            return False, 'Efetue login novamete para prosseguir'
         tarefas = self.banco_tarefa.show_tasks(id_usuario)
         if tarefas:
             return tarefas
@@ -32,6 +34,8 @@ class Tarefas:
 
     def deletar_tarefa(self, id_tarefa: int, id_usuario: int, usuario:dict, senha_user:str) -> tuple[bool, str]:
         if id_tarefa is None or id_usuario is None:
+            return False, 'Não pode haver campos em branco!'
+        if senha_user is None or usuario is None:
             return False, 'Não pode haver campos em branco!'
         if not self.auth.verificar_senha(senha_user, usuario['password']):
             return False, 'Senha incorreta'
