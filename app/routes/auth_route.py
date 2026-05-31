@@ -2,13 +2,14 @@ from flask.blueprints import Blueprint
 from flask import request, session, Response, render_template, redirect, flash, url_for
 from app.services.auth_service import Autenticacao
 from app.models.user import UserRepository
-
+from app.extensions import limiter
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 autenticacao = Autenticacao()
 banco = UserRepository()
 
 
 @auth_bp.route('/cadastro', methods=['GET', 'POST'])
+@limiter.limit('10 per minute', methods=['POST'])
 def cadastrar_usuario():
     if request.method == 'POST':
         nome = request.form.get('nome')
@@ -24,6 +25,7 @@ def cadastrar_usuario():
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute", methods=['POST'])
 def login() -> tuple[Response, int]:
     if request.method == 'POST':
         email = request.form.get('email')
