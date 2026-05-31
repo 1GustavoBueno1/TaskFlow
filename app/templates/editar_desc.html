@@ -1,21 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskflow editando tarefa</title>
-</head>
-<body>
-    <header>
-        <h1>Editando tarefa</h1>
-    </header>
-    <form action="{{url_for('tarefa.editar_tarefa', id_tarefa=id_tarefa, coluna = coluna)}}" method="POST">
+{% extends "base.html" %}
+
+{% block title %}Editar tarefa — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <h2 class="card-title">Editar {{ coluna }}</h2>
+    <p class="card-subtitle">Atualize as informações da sua tarefa.</p>
+    <form action="{{ url_for('tarefa.editar_tarefa', id_tarefa=id_tarefa, coluna=coluna) }}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <label for="{{coluna}}">{{coluna}}</label>
-        <input type="text" name="{{coluna}}" id="{{coluna}}" placeholder="Editando {{coluna}}" required>
-        <button type="submit">Confirmar</button>
-
-
+        <div class="form-group">
+            <label for="{{ coluna }}">{{ coluna|capitalize }}</label>
+            <input type="text" name="{{ coluna }}" id="{{ coluna }}" placeholder="Novo valor para {{ coluna }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Confirmar</button>
     </form>
-</body>
-</html>
+    <div class="form-footer text-center">
+        <p><a href="{{ url_for('tarefa.listar_tarefas') }}" class="text-muted">← Voltar para lista</a></p>
+    </div>
+</div>
+{% endblock %}

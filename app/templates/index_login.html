@@ -1,26 +1,14 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <title>TaskFlow</title>
-</head>
-<body>
-    <h1>TaskFlow</h1>
-    <p>Seja bem vindo {{nome_de_usuario}} oque vamos fazer hoje?</p>
-    <a href="/tarefa/listar">Ver suas tarefas</a>
-    <a href="/perfil/visualizar">Ver perfil</a>
-    <a href="/perfil/sair">Sair da conta</a>
-    {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-            <ul class="flashes">
-                {% for categoria, message in messages %}
-                <li class="flash-{{ categoria|lower }}">
-                    {{message}}
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
-</html>
+{% extends "base.html" %}
+
+{% block title %}TaskFlow — Início{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Olá, {{ nome_de_usuario }}!</h1>
+    <p>O que vamos fazer hoje?</p>
+    <div class="hero-actions">
+        <a href="{{ url_for('tarefa.listar_tarefas') }}" class="btn btn-primary btn-lg">Ver minhas tarefas</a>
+        <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-secondary btn-lg">Criar nova tarefa</a>
+    </div>
+</section>
+{% endblock %}

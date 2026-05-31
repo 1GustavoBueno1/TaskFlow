@@ -1,51 +1,48 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskFlow tarefas</title>
-</head>
-<body>
-    <header>
-        <h1>Tarefas do usuario</h1>
-    </header>
-    <main>
-        {% if tarefas %}
-            {% for tarefa in tarefas %}
-                <p>Nome: {{tarefa['name']}} - <a href="{{url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna = 'name')}}">Atualizar nome</a></p>
-                <p>Descrição: {{tarefa['description']}} - <a href="{{url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna = 'description')}}">Atualizar descrição</a></p>
-                <p>Status: {{tarefa['status']}} - 
-                    <form action="{{url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna = 'status')}}" method="POST">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <select name="status" id="status" onchange="this.form.submit()">
-                            <option value="pendente" {% if tarefa['status'] == 'pendente' %}selected{% endif %}>Pendente</option>
-                            <option value="concluida" {% if tarefa['status'] == 'concluida' %}selected{% endif %}>Concluir tarefa</option>
-                        </select>
-                    </form>
-                </p>
-                <form action="{{url_for('tarefa.deletar_tarefa', id_tarefa=tarefa['id'])}}" method="POST" onsubmit="return confirm('Deseja deletar essa tarefa?')">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <label for="password">senha</label>
-                    <input type="password" name="password" id="password" placeholder="Insira sua senha" required>
-                    <button type="submit">Deletar</button>
-                </form>
-                <hr>
-            {% endfor %}
-        {% else %}
-            <p>Você não possui tarefas ativas no momento</p>
-        {% endif %}
-        {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-            <ul class="flashes">
-                {% for categoria, message in messages %}
-                <li class="flash-{{ categoria|lower }}">
-                    {{message}}
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
-        <a href="/tarefa/criar">Criar tarefas</a>
-    </main>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Minhas tarefas — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Minhas tarefas</h1>
+    <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-primary">+ Nova tarefa</a>
+</div>
+
+{% if tarefas %}
+<div class="task-list">
+    {% for tarefa in tarefas %}
+    <div class="task-card">
+        <div class="task-header">
+            <h3 class="task-title">{{ tarefa['name'] }}</h3>
+            <a href="{{ url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna='name') }}" class="task-edit-link">Editar nome</a>
+        </div>
+        <p class="task-desc">
+            {{ tarefa['description'] }}
+            <a href="{{ url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna='description') }}" class="task-edit-link">Editar</a>
+        </p>
+        <span class="task-status task-status-{{ tarefa['status'] }}">{{ tarefa['status'] }}</span>
+        <div class="task-controls">
+            <form action="{{ url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna='status') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="status" id="status-{{ tarefa['id'] }}" onchange="this.form.submit()">
+                    <option value="pendente" {% if tarefa['status'] == 'pendente' %}selected{% endif %}>Pendente</option>
+                    <option value="concluida" {% if tarefa['status'] == 'concluida' %}selected{% endif %}>Concluída</option>
+                </select>
+            </form>
+            <form action="{{ url_for('tarefa.deletar_tarefa', id_tarefa=tarefa['id']) }}" method="POST" onsubmit="return confirm('Deseja deletar essa tarefa?')" class="task-delete-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="password" name="password" placeholder="Sua senha" required>
+                <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+    <h2>Nenhuma tarefa por aqui</h2>
+    <p>Crie sua primeira tarefa para começar a se organizar.</p>
+    <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-primary btn-lg">Criar primeira tarefa</a>
+</div>
+{% endif %}
+{% endblock %}

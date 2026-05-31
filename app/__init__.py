@@ -26,8 +26,8 @@ def create_app() -> Flask:
         flash("Muitas tentativas. Aguarde um momento e tente novamente.", "erro")
         return redirect(url_for('auth.login'))
 
-    table_user.create_table_users()
     table_task.create_table_tasks()
+    table_user.create_table_users()
 
     @app.route('/')
     def homepage():

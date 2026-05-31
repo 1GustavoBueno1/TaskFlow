@@ -1,41 +1,25 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <title>TaskFlow - Login</title>
-</head>
-<body>
-    <header>
-        <h1>TaskFlow - Login</h1>
-    </header>
-    <main>
-        <form action="/auth/login" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <label for="email">E-mail</label>
-            <input type="email" id="email" name="email" placeholder="Insira seu E-mail" required>
-            
-            <label for="senha">Senha</label>
-            <input type="password" id="senha" name="senha" placeholder="Insira sua Senha" required>
+{% extends "base.html" %}
 
-            <button type="submit">Entrar</button>
-        </form>
-        {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-            <ul class="flashes">
-                {% for categoria, message in messages %}
-                <li class="flash-{{ categoria|lower }}">
-                    {{message}}
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
-        <p>Ainda não tem uma conta?<a href="{{url_for('auth.cadastrar_usuario')}}"> Cadastrar-se</a></p>
-    </main>
-    <footer>
-        <p>TaskFlow &copy; 2026</p>
-    </footer>
-</body>
-</html>
+{% block title %}Entrar — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <h2 class="card-title">Entrar</h2>
+    <p class="card-subtitle">Acesse sua conta para gerenciar suas tarefas.</p>
+    <form action="/auth/login" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+            <label for="senha">Senha</label>
+            <input type="password" id="senha" name="senha" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+    </form>
+    <div class="form-footer text-center">
+        <p class="text-muted">Não tem uma conta? <a href="{{ url_for('auth.cadastrar_usuario') }}">Cadastre-se</a></p>
+    </div>
+</div>
+{% endblock %}

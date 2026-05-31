@@ -1,32 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <title>TaskFlow - perfil</title>
-</head>
-<body>
-    <head>
-        <h1>Perfil de usuario</h1>
-    </head>
-    <main>
-        <p>Nome:    {{dados_do_perfil['name']}} <a href="{{url_for('usuario.editar_perfil', coluna = 'name')}}">Editar Nome</a></p>
-        <p>E-mail:  {{dados_do_perfil['gmail']}} <a href="{{url_for('usuario.editar_perfil', coluna = 'gmail')}}">Editar E-mail</a></p>
-    </main>
-    {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-            <ul class="flashes">
-                {% for categoria, message in messages %}
-                <li class="flash-{{ categoria|lower }}">
-                    {{message}}
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
-    <footer>
-        TaskFlow &copy; 2026
-    </footer>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Meu perfil — TaskFlow{% endblock %}
+
+{% block content %}
+<div class="card card-narrow">
+    <h2 class="card-title">Meu perfil</h2>
+    <p class="card-subtitle">Suas informações pessoais.</p>
+    <div class="profile-info">
+        <div class="profile-row">
+            <div>
+                <p class="profile-row-label">Nome</p>
+                <p class="profile-row-value">{{ dados_do_perfil['name'] }}</p>
+            </div>
+            <a href="{{ url_for('usuario.editar_perfil', coluna='name') }}" class="profile-row-edit">Editar</a>
+        </div>
+        <div class="profile-row">
+            <div>
+                <p class="profile-row-label">E-mail</p>
+                <p class="profile-row-value">{{ dados_do_perfil['gmail'] }}</p>
+            </div>
+            <a href="{{ url_for('usuario.editar_perfil', coluna='gmail') }}" class="profile-row-edit">Editar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
