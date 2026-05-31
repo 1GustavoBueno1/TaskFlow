@@ -12,8 +12,9 @@ class Config():
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
     DB_NAME = os.getenv('DB_NAME', '')
     DB_PORT = int(os.getenv('DB_PORT', '3307'))
-    SESSION_COOKIE_SEGURE = True
+    SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
     SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
     @staticmethod
     def get_connection():
         connection = pymysql.connect(
