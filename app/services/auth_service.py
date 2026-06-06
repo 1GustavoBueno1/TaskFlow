@@ -42,7 +42,7 @@ class Autenticacao:
         except ValueError:
             return False, "Email já existente!"
 
-    def login(self, email: str, senha: str) -> tuple[dict | None, str]:
+    def login(self, email: str, senha: str) -> tuple[None, str] | tuple[dict, str]:
         if not email or not senha:
             return None, "Não pode haver campos em branco!"
         usuario = self.banco_dados.login(email)
@@ -54,7 +54,7 @@ class Autenticacao:
         self.logs.erro(f"Acesso negado: {email}")
         return None, "Credenciais inválidas!"
     
-    def sair(self, senha_user: str, senha_correta: dict):
+    def sair(self, senha_user: str, senha_correta: dict) -> tuple[bool, str]:
         if senha_correta is None or senha_user is None:
             return False, 'Não pode haver campos em branco'
         if self.verificar_senha(senha_user, senha_correta['password']):

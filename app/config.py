@@ -6,7 +6,7 @@ load_dotenv()
 class Config():
     SECRET_KEY = os.getenv('SECRET_KEY')
     if SECRET_KEY is None:
-        raise RuntimeError('Secret key nãoo foi definida')
+        raise RuntimeError('Secret key não foi definida')
     DB_HOST = os.getenv('DB_HOST', 'localhost')
     DB_USER = os.getenv('DB_USER', '')
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')

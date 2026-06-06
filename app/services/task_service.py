@@ -10,7 +10,7 @@ class Tarefas:
         self.banco_tarefa = TaskRepository()
         self.auth = Autenticacao()
 
-    def listar_tarefas(self, id_usuario: int) -> list | bool:
+    def listar_tarefas(self, id_usuario: int) -> list | tuple[bool, str]:
         if id_usuario is None:
             return False, 'Efetue login novamete para prosseguir'
         tarefas = self.banco_tarefa.show_tasks(id_usuario)

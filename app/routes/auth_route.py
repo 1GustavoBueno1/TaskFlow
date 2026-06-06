@@ -10,7 +10,7 @@ banco = UserRepository()
 
 @auth_bp.route('/cadastro', methods=['GET', 'POST'])
 @limiter.limit('10 per minute', methods=['POST'])
-def cadastrar_usuario():
+def cadastrar_usuario() -> Response:
     if request.method == 'POST':
         nome = request.form.get('nome')
         email = request.form.get('email')
@@ -26,7 +26,7 @@ def cadastrar_usuario():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 @limiter.limit("5 per minute", methods=['POST'])
-def login() -> tuple[Response, int]:
+def login() -> Response:
     if request.method == 'POST':
         email = request.form.get('email')
         senha = request.form.get('senha')

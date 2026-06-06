@@ -19,7 +19,7 @@ def visualizar_perfil() -> tuple[Response, int]:
 
 
 @usuario_bp.route('/editar/<coluna>', methods=['GET', 'POST'])
-def editar_perfil(coluna) -> tuple[Response, int]:
+def editar_perfil(coluna) -> tuple[Response, int] | Response:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
@@ -36,7 +36,7 @@ def editar_perfil(coluna) -> tuple[Response, int]:
         return redirect(url_for('homepage'))
     return render_template('edit_user.html', coluna = coluna)
 @usuario_bp.route('/sair', methods = ['GET', 'POST'])
-def sair():
+def sair() -> Response:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
