@@ -9,7 +9,7 @@ banco_usuario = UserRepository()
 servico_usuario = Usuario()
 servico_auth = Autenticacao()
 @usuario_bp.route('/visualizar', methods=['GET'])
-def visualizar_perfil() -> tuple[Response, int]:
+def visualizar_perfil() -> Response | str:
     if request.method == 'GET':
         id_usuario = session.get('user_id')
         if id_usuario:
@@ -19,7 +19,7 @@ def visualizar_perfil() -> tuple[Response, int]:
 
 
 @usuario_bp.route('/editar/<coluna>', methods=['GET', 'POST'])
-def editar_perfil(coluna) -> tuple[Response, int] | Response:
+def editar_perfil(coluna) -> str | Response:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
@@ -36,7 +36,7 @@ def editar_perfil(coluna) -> tuple[Response, int] | Response:
         return redirect(url_for('homepage'))
     return render_template('edit_user.html', coluna = coluna)
 @usuario_bp.route('/sair', methods = ['GET', 'POST'])
-def sair() -> Response:
+def sair() -> Response | str:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:

@@ -12,7 +12,7 @@ servico_tarefa = Tarefas()
 
 
 @tarefa_bp.route('/listar', methods=['GET'])
-def listar_tarefas() -> tuple[Response, int] | Response:
+def listar_tarefas() -> str | Response:
     if request.method == 'GET':
         id_usuario = session.get('user_id')
         if id_usuario:
@@ -22,7 +22,7 @@ def listar_tarefas() -> tuple[Response, int] | Response:
 
 
 @tarefa_bp.route('/editar/deletar/<int:id_tarefa>', methods=['GET', 'POST'])
-def deletar_tarefa(id_tarefa) -> Response:
+def deletar_tarefa(id_tarefa) -> Response | str:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
@@ -39,7 +39,7 @@ def deletar_tarefa(id_tarefa) -> Response:
     return render_template('tarefas_user.html')
 
 @tarefa_bp.route('/editar/<int:id_tarefa>/<coluna>', methods=['GET', 'POST'])
-def editar_tarefa(id_tarefa, coluna) -> tuple[Response, int] | Response:
+def editar_tarefa(id_tarefa, coluna) -> str | Response:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
@@ -55,7 +55,7 @@ def editar_tarefa(id_tarefa, coluna) -> tuple[Response, int] | Response:
     return render_template('editar_desc.html', id_tarefa=id_tarefa, coluna = coluna)
 
 @tarefa_bp.route('/criar', methods=['GET', 'POST'])
-def criar_tarefa() -> Response:
+def criar_tarefa() -> Response | str:
     if request.method == 'POST':
         id_usuario = session.get('user_id')
         if id_usuario:
