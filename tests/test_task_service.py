@@ -48,7 +48,7 @@ def test_editar_tarefa_campos_em_branco(tarefas, campo, novo_dado, id_tarefa, id
     ok, msg = tarefas.editar_tarefas(campo, novo_dado, id_tarefa, id_usuario)
     assert ok is False
     assert msg == 'Não pode haver campos em branco!'
-
+    tarefas.banco_tarefa.update_task.assert_not_called()
 
 def test_editar_tarefa_campo_invalido(tarefas):
     ok, msg = tarefas.editar_tarefas("coluna_inexistente", "x", 1, 1)
@@ -85,7 +85,9 @@ def test_editar_tarefa_repositorio_levanta_valueerror(tarefas):
     ok, msg = tarefas.editar_tarefas("name", "x", 1, 1)
     assert ok is False
     assert msg == 'Campo name não existe'
-
+    # update_task FOI chamado — é ele que levanta o ValueError (via side_effect).
+    # provamos que o service capturou esse erro e devolveu a mensagem certa.
+    tarefas.banco_tarefa.update_task.assert_called_once()
 
 # --- deletar_tarefa --------------------------------------------------------
 

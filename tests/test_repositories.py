@@ -27,7 +27,6 @@ def test_update_user_rejeita_coluna_nao_permitida(coluna):
     with pytest.raises(ValueError):
         repo.update_user(coluna, "valor", 1)
 
-
 @pytest.mark.parametrize("coluna", [
     "id",
     "user_id",

@@ -35,7 +35,7 @@ def test_editar_perfil_campos_vazios(usuario_service, campo, dado, senha):
     ok, msg = usuario_service.editar_perfil(campo, dado, senha, 1, USUARIO)
     assert ok is False
     assert msg == 'Não pode haver campos vazios'
-
+    usuario_service.banco_usuario.update_user.assert_not_called()
 
 @pytest.mark.parametrize("id_usuario,usuario", [
     (None, USUARIO),
@@ -45,7 +45,7 @@ def test_editar_perfil_sem_login(usuario_service, id_usuario, usuario):
     ok, msg = usuario_service.editar_perfil("name", "Novo", "senha", id_usuario, usuario)
     assert ok is False
     assert msg == 'Efetue login novamente para prosseguir'
-
+    usuario_service.banco_usuario.update_user.assert_not_called()
 
 def test_editar_perfil_senha_incorreta(usuario_service):
     usuario_service.autenticacao.verificar_senha.return_value = False

@@ -105,19 +105,19 @@ def test_cadastrar_usuario_nome_muito_longo(auth):
     ok, msg = auth.cadastrar_usuario("G" * 21, "gustavo@gmail.com", "senhaforte123")
     assert ok is False
     assert msg == "Nome nao pode ser muito longo"
-
+    auth.banco_dados.insert.assert_not_called()
 
 def test_cadastrar_usuario_senha_curta(auth):
     ok, msg = auth.cadastrar_usuario("Gustavo", "gustavo@gmail.com", "1234567")
     assert ok is False
     assert msg == "Sua senha é muito curta!"
-
+    auth.banco_dados.insert.assert_not_called()
 
 def test_cadastrar_usuario_email_invalido(auth):
     ok, msg = auth.cadastrar_usuario("Gustavo", "gustavo@yahoo.com", "senhaforte123")
     assert ok is False
     assert msg == "Insira um email válido"
-
+    auth.banco_dados.insert.assert_not_called()
 
 def test_cadastrar_usuario_email_duplicado(auth):
     # o repositório levanta ValueError quando o e-mail já existe
@@ -125,7 +125,9 @@ def test_cadastrar_usuario_email_duplicado(auth):
     ok, msg = auth.cadastrar_usuario("Gustavo", "gustavo@gmail.com", "senhaforte123")
     assert ok is False
     assert msg == "Email já existente!"
-
+    # aqui o insert FOI chamado — é ele que levanta o erro (via side_effect).
+    # o que provamos é que o service tratou esse erro e não o deixou estourar.
+    auth.banco_dados.insert.assert_called_once()
 
 # --- login ------------------------------------------------------------------
 
@@ -133,7 +135,7 @@ def test_login_campos_em_branco(auth):
     usuario, msg = auth.login("", "")
     assert usuario is None
     assert msg == "Não pode haver campos em branco!"
-
+    
 
 def test_login_usuario_inexistente(auth):
     auth.banco_dados.login.return_value = None
