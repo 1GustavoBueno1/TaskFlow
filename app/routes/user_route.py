@@ -10,12 +10,11 @@ servico_usuario = Usuario()
 servico_auth = Autenticacao()
 @usuario_bp.route('/visualizar', methods=['GET'])
 def visualizar_perfil() -> Response | str:
-    if request.method == 'GET':
-        id_usuario = session.get('user_id')
-        if id_usuario:
-            usuario = banco_usuario.find(id_usuario)
-            return render_template('perfil.html', dados_do_perfil = usuario)
-        return redirect(url_for('homepage'))
+    id_usuario = session.get('user_id')
+    if id_usuario:
+        usuario = banco_usuario.find(id_usuario)
+        return render_template('perfil.html', dados_do_perfil = usuario)
+    return redirect(url_for('homepage'))
 
 
 @usuario_bp.route('/editar/<coluna>', methods=['GET', 'POST'])

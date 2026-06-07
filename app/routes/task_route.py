@@ -13,12 +13,11 @@ servico_tarefa = Tarefas()
 
 @tarefa_bp.route('/listar', methods=['GET'])
 def listar_tarefas() -> str | Response:
-    if request.method == 'GET':
-        id_usuario = session.get('user_id')
-        if id_usuario:
-            tarefas = servico_tarefa.listar_tarefas(id_usuario)
-            return render_template('tarefas_user.html', tarefas = tarefas)
-        return redirect(url_for('homepage'))
+    id_usuario = session.get('user_id')
+    if id_usuario:
+        tarefas = servico_tarefa.listar_tarefas(id_usuario)
+        return render_template('tarefas_user.html', tarefas = tarefas)
+    return redirect(url_for('homepage'))
 
 
 @tarefa_bp.route('/editar/deletar/<int:id_tarefa>', methods=['GET', 'POST'])
