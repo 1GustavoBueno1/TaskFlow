@@ -7,13 +7,14 @@ from .routes.task_route import tarefa_bp
 from .routes.user_route import usuario_bp
 from .models.task import TaskRepository
 from .models.user import UserRepository
-
+from werkzeug.middleware.proxy_fix import ProxyFix
 table_user = UserRepository()
 table_task = TaskRepository()
 
 
 def create_app() -> Flask:
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
     app.config.from_object(Config)
     csrf.init_app(app)
     limiter.init_app(app)
