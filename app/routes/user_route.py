@@ -29,7 +29,7 @@ def editar_perfil(coluna) -> str | Response:
         return redirect(url_for('usuario.visualizar_perfil'))
     return render_template('edit_user.html', coluna = coluna)
 @usuario_bp.route('/sair', methods = ['GET', 'POST'])
-@logout_necessario
+@login_necessario
 def sair() -> Response | str:
     id_usuario = session.get('user_id')
     if request.method == 'POST':
