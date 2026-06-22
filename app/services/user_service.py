@@ -12,14 +12,12 @@ class Usuario:
         self.autenticacao = Autenticacao()
 
     def editar_perfil(self, campo: str, dado: str, user_senha:str ,id_usuario: int, usuario) -> tuple[bool, str]:
-        if dado is None or campo is None or user_senha is None:
+        if dado is None or campo is None or not dado.strip() or not campo.strip() or user_senha is None:
             return False, 'Não pode haver campos vazios'
         if usuario is None or id_usuario is None:
             return False, 'Efetue login novamente para prosseguir'
         if not self.autenticacao.verificar_senha(user_senha, usuario['password']):
             return False, 'senha incorreta, para alterar informações, digite sua senha corretamente'
-        if campo is None:
-            return False, f'Campo {campo} não existe'
         if campo == 'password':
             if len(dado) < 8:
                 return False, 'Sua senha é muito curta'

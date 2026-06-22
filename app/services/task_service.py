@@ -1,6 +1,5 @@
 from app.models.task import TaskRepository
 from app.services.auth_service import Autenticacao
-autenticacao = Autenticacao()
 MAPA_CAMPOS_TAREFA = frozenset(['name', 'description', 'status'])
 MAPA_CAMPOS_STATUS = frozenset(["pendente", "concluida"])
 
@@ -19,7 +18,7 @@ class Tarefas:
         return False
 
     def editar_tarefas(self, campo: str, novo_dado: str, id_tarefa: int, id_usuario: int) -> tuple[bool, str]:
-        if campo is None or novo_dado is None or id_tarefa is None or id_usuario is None:
+        if campo is None or novo_dado is None or not campo.strip() or not novo_dado.strip() or id_tarefa is None or id_usuario is None:
             return False, 'Não pode haver campos em branco!'
         if campo not in MAPA_CAMPOS_TAREFA:
             return False, f'Campo {campo} não existe'
@@ -45,7 +44,7 @@ class Tarefas:
         return False, 'Não foi possível deletar essa tarefa'
 
     def criar_tarefa(self, nome: str, descricao: str, id_usuario: int) -> tuple[bool, str]:
-        if nome is None or id_usuario is None or descricao is None:
+        if not nome.strip() or nome is None or not id_usuario or not descricao.strip():
             return False, 'Não pode haver campos em branco!'
         self.banco_tarefa.insert_task(nome, descricao, id_usuario)
         return True, 'Tarefa criada com sucesso'

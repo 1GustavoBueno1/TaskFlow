@@ -5,7 +5,6 @@ from app.models.user import UserRepository
 from app.extensions import limiter
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 autenticacao = Autenticacao()
-banco = UserRepository()
 
 
 @auth_bp.route('/cadastro', methods=['GET', 'POST'])
