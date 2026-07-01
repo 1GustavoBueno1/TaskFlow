@@ -64,3 +64,5 @@ Erro: Acesso negado: teste@gmail.com
 Erro: Acesso negado: teste@gmail.com
 Sucesso: Cadastro realizado: teste21@gmail.com
 Sucesso: Login realizado com sucesso: teste21@gmail.com
+Sucesso: Login realizado com sucesso: teste21@gmail.com
+Sucesso: Login realizado com sucesso: teste21@gmail.com

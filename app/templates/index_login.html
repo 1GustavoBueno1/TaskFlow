@@ -4,10 +4,10 @@
 
 {% block content %}
 <section class="hero">
-    <h1>Olá, {{ nome_de_usuario }}!</h1>
-    <p>O que vamos fazer hoje?</p>
-    <div class="hero-actions">
-        <a href="{{ url_for('tarefa.listar_tarefas') }}" class="btn btn-primary btn-lg">Ver minhas tarefas</a>
+    <h1 data-reveal>Olá, {{ nome_de_usuario }}!</h1>
+    <p data-reveal data-delay="1">O que vamos fazer hoje?</p>
+    <div class="hero-actions" data-reveal data-delay="2">
+        <a href="{{ url_for('tarefa.listar_tarefas') }}" class="btn btn-primary btn-lg" data-magnetic="0.2">Ver minhas tarefas</a>
         <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-secondary btn-lg">Criar nova tarefa</a>
     </div>
 </section>

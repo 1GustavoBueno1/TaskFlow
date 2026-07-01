@@ -5,13 +5,45 @@
 {% block content %}
 <div class="page-header">
     <h1>Minhas tarefas</h1>
-    <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-primary">+ Nova tarefa</a>
+    <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-primary" data-magnetic="0.2">+ Nova tarefa</a>
 </div>
 
 {% if tarefas %}
+    {# ---- "Meta" derivada: % de tarefas concluídas (a API não tem goal) ----
+       Calculado aqui no template a partir dos dados reais que vieram da rota. #}
+    {% set total = tarefas | length %}
+    {% set concluidas = tarefas | selectattr('status', 'equalto', 'concluida') | list | length %}
+    {% set pendentes = total - concluidas %}
+    {% set pct = (concluidas * 100 // total) if total else 0 %}
+
+    <div class="progress-summary" data-reveal>
+        {# O anel anima o stroke via JS (reveal.js) quando entra na viewport #}
+        <div class="ring" data-ring data-value="{{ pct }}">
+            <svg viewBox="0 0 120 120">
+                <circle class="ring-track" cx="60" cy="60" r="52"></circle>
+                <circle class="ring-fill" cx="60" cy="60" r="52"></circle>
+            </svg>
+            <div class="ring-label"><span data-count="{{ pct }}">0</span>%</div>
+        </div>
+        <div class="progress-stats">
+            <div class="progress-stat">
+                <div class="n"><span data-count="{{ total }}">0</span></div>
+                <div class="l">Total</div>
+            </div>
+            <div class="progress-stat">
+                <div class="n" style="color:var(--success)"><span data-count="{{ concluidas }}">0</span></div>
+                <div class="l">Concluídas</div>
+            </div>
+            <div class="progress-stat">
+                <div class="n" style="color:var(--warning)"><span data-count="{{ pendentes }}">0</span></div>
+                <div class="l">Pendentes</div>
+            </div>
+        </div>
+    </div>
+
 <div class="task-list">
     {% for tarefa in tarefas %}
-    <div class="task-card">
+    <div class="task-card" data-reveal>
         <div class="task-header">
             <h3 class="task-title">{{ tarefa['name'] }}</h3>
             <a href="{{ url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna='name') }}" class="task-edit-link">Editar nome</a>
@@ -24,12 +56,15 @@
         <div class="task-controls">
             <form action="{{ url_for('tarefa.editar_tarefa', id_tarefa=tarefa['id'], coluna='status') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <select name="status" id="status-{{ tarefa['id'] }}" onchange="this.form.submit()">
+                {# onchange = fallback sem-JS; o micro.js remove esse atributo e assume
+                   o controle (data-status-select) para dar o pulso antes do POST. #}
+                <select name="status" id="status-{{ tarefa['id'] }}" data-status-select onchange="this.form.submit()">
                     <option value="pendente" {% if tarefa['status'] == 'pendente' %}selected{% endif %}>Pendente</option>
                     <option value="concluida" {% if tarefa['status'] == 'concluida' %}selected{% endif %}>Concluída</option>
                 </select>
             </form>
-            <form action="{{ url_for('tarefa.deletar_tarefa', id_tarefa=tarefa['id']) }}" method="POST" onsubmit="return confirm('Deseja deletar essa tarefa?')" class="task-delete-form">
+            {# data-delete-form: o micro.js anima a saída do card antes de enviar #}
+            <form action="{{ url_for('tarefa.deletar_tarefa', id_tarefa=tarefa['id']) }}" method="POST" onsubmit="return confirm('Deseja deletar essa tarefa?')" class="task-delete-form" data-delete-form>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <input type="password" name="password" placeholder="Sua senha" required>
                 <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
@@ -42,7 +77,7 @@
 <div class="empty-state">
     <h2>Nenhuma tarefa por aqui</h2>
     <p>Crie sua primeira tarefa para começar a se organizar.</p>
-    <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-primary btn-lg">Criar primeira tarefa</a>
+    <a href="{{ url_for('tarefa.criar_tarefa') }}" class="btn btn-primary btn-lg" data-magnetic="0.2">Criar primeira tarefa</a>
 </div>
 {% endif %}
 {% endblock %}

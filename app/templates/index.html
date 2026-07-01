@@ -1,14 +1,146 @@
 {% extends "base.html" %}
 
-{% block title %}TaskFlow — Gerencie suas tarefas com facilidade{% endblock %}
+{% block title %}TaskFlow — Organize seu dia, domine suas metas{% endblock %}
+
+{# body.landing tira o padding padrão do main e libera as seções full-width #}
+{% block body_class %}landing{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Organize seu dia.<br>Domine suas tarefas.</h1>
-    <p>O TaskFlow ajuda você a gerenciar tarefas e responsabilidades com simplicidade e clareza.</p>
-    <div class="hero-actions">
-        <a href="{{ url_for('auth.cadastrar_usuario') }}" class="btn btn-primary btn-lg">Começar grátis</a>
-        <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-lg">Entrar</a>
-    </div>
-</section>
+<div class="lp">
+
+    {# ================= HERO =================
+       Fundo em 3 camadas: gradiente animado (fallback) -> vídeo (se existir)
+       -> véu escuro para contraste. O <video> se auto-remove se a mídia faltar. #}
+    <section class="lp-hero">
+        <div class="lp-hero-bg" data-parallax="0.15"></div>
+        <video class="lp-hero-video" autoplay muted loop playsinline
+               poster="{{ url_for('static', filename='media/hero-poster.jpg') }}"
+               onerror="this.remove()">
+            <source src="{{ url_for('static', filename='media/hero-loop.mp4') }}" type="video/mp4">
+        </video>
+
+        <div class="lp-inner lp-hero-content" data-hero-content>
+            <span class="lp-eyebrow" data-reveal>✦ Seu fluxo de tarefas, sem fricção</span>
+            <h1 data-reveal>Organize seu dia.<br><span class="grad">Domine suas metas.</span></h1>
+            <p data-reveal data-delay="1">
+                O TaskFlow transforma uma lista bagunçada em progresso visível.
+                Crie tarefas, acompanhe o avanço e veja suas metas ganharem forma.
+            </p>
+            <div class="lp-cta-row" data-reveal data-delay="2">
+                <a href="{{ url_for('auth.cadastrar_usuario') }}" class="btn btn-primary btn-lg" data-magnetic="0.25">Começar grátis</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-lg">Entrar</a>
+            </div>
+        </div>
+
+        <div class="lp-scroll-cue" aria-hidden="true">
+            <span></span>
+            Role para descobrir
+        </div>
+    </section>
+
+    {# ================= MANIFESTO =================
+       Frases grandes que "acendem" (mudam de cor) ao entrar na viewport. #}
+    <section class="lp-section lp-manifesto">
+        <div class="lp-inner">
+            <p data-reveal>Toda grande meta</p>
+            <p data-reveal data-delay="1">começa como <span class="hl">uma pequena tarefa.</span></p>
+            <p data-reveal data-delay="2">O TaskFlow existe pra você <span class="hl">nunca perder o fio.</span></p>
+        </div>
+    </section>
+
+    {# ================= NÚMEROS (contadores) ================= #}
+    <section class="lp-section">
+        <div class="lp-inner">
+            <span class="lp-eyebrow" data-reveal>Por que TaskFlow</span>
+            <h2 data-reveal>Clareza que vira constância.</h2>
+            <div class="lp-stats" style="margin-top:40px">
+                <div class="lp-stat" data-reveal>
+                    <div class="lp-stat-num"><span data-count="3">0</span>x</div>
+                    <div class="lp-stat-label">mais foco com tarefas em foco único</div>
+                </div>
+                <div class="lp-stat" data-reveal data-delay="1">
+                    <div class="lp-stat-num"><span data-count="100">0</span>%</div>
+                    <div class="lp-stat-label">do seu progresso visível de relance</div>
+                </div>
+                <div class="lp-stat" data-reveal data-delay="2">
+                    <div class="lp-stat-num"><span data-count="0">0</span></div>
+                    <div class="lp-stat-label">distrações — só você e a próxima tarefa</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ================= COMO FUNCIONA (scroll horizontal pinado) =================
+       A seção "prega" na tela e a trilha desliza no eixo X conforme você rola.
+       No mobile (<=720px) o JS não pina e o CSS empilha os painéis. #}
+    <section class="lp-section lp-horizontal" data-horizontal>
+        <div class="lp-inner">
+            <span class="lp-eyebrow">Como funciona</span>
+            <h2>Três passos para sair do caos.</h2>
+        </div>
+        <div class="lp-horizontal-viewport" style="margin-top:40px">
+            <div class="lp-horizontal-track" data-horizontal-track>
+                <article class="lp-panel">
+                    <span class="lp-panel-step">PASSO 01</span>
+                    <div>
+                        <h3>Capture</h3>
+                        <p>Jogue tudo o que está na sua cabeça para dentro do TaskFlow. Uma tarefa por linha, sem peso.</p>
+                    </div>
+                </article>
+                <article class="lp-panel">
+                    <span class="lp-panel-step">PASSO 02</span>
+                    <div>
+                        <h3>Acompanhe</h3>
+                        <p>Marque como pendente ou concluída. O status vira cor, e a cor vira sensação de avanço.</p>
+                    </div>
+                </article>
+                <article class="lp-panel">
+                    <span class="lp-panel-step">PASSO 03</span>
+                    <div>
+                        <h3>Conquiste</h3>
+                        <p>Veja o anel de progresso encher. Suas tarefas concluídas viram a prova de que a meta é possível.</p>
+                    </div>
+                </article>
+                <article class="lp-panel">
+                    <span class="lp-panel-step">E repita</span>
+                    <div>
+                        <h3>Todo dia</h3>
+                        <p>Constância não é intensidade. É voltar amanhã — com a lista limpa e a meta mais perto.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    {# ================= FEATURE com imagem de fundo (parallax) =================
+       O fundo usa /media/section-1.jpg quando existir; senão, o gradiente do
+       .lp-feature aparece. O parallax move só o fundo (transform, 60fps). #}
+    <section class="lp-section">
+        <div class="lp-inner">
+            <div class="lp-feature" data-reveal="scale">
+                <div class="lp-feature-bg" data-parallax="0.2"
+                     style="background-image:url('{{ url_for('static', filename='media/section-1.jpg') }}')"></div>
+                <div class="lp-feature-content">
+                    <span class="lp-eyebrow">Progresso, não pressão</span>
+                    <h2>Metas derivadas das suas tarefas.</h2>
+                    <p class="lp-lead">O TaskFlow calcula o quanto você já concluiu e mostra isso num anel vivo — sua meta ganha rosto sem você preencher planilha nenhuma.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# ================= CTA FINAL ================= #}
+    <section class="lp-cta">
+        <div class="lp-inner">
+            <span class="lp-eyebrow" data-reveal>Pronto para começar?</span>
+            <h2 data-reveal>Sua próxima meta começa<br>com a próxima tarefa.</h2>
+            <p class="lp-lead" data-reveal data-delay="1" style="margin:0 auto 32px">Crie sua conta grátis e transforme intenção em progresso hoje.</p>
+            <div class="lp-cta-row" data-reveal data-delay="2" style="justify-content:center">
+                <a href="{{ url_for('auth.cadastrar_usuario') }}" class="btn btn-primary btn-lg" data-magnetic="0.25">Criar conta grátis</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-lg">Já tenho conta</a>
+            </div>
+        </div>
+    </section>
+
+</div>
 {% endblock %}

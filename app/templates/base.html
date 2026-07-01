@@ -7,12 +7,40 @@
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#0F1117">
     <title>{% block title %}TaskFlow{% endblock %}</title>
+    {# Anti-flash da transição de página: se viemos de um wipe, já marca o
+       <html> ANTES da primeira pintura para o overlay aparecer cobrindo. #}
+    <script>
+        try {
+            if (sessionStorage.getItem('tf-transition')) {
+                document.documentElement.classList.add('tf-incoming');
+            }
+            // Marca js-anim ANTES da 1ª pintura para esconder os [data-reveal]
+            // sem flash. Só quando o usuário não pediu menos movimento.
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.documentElement.classList.add('js-anim');
+            }
+        } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/anim.css') }}">
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
+    <!-- Overlay usado pelas transições de página (wipe). Fica invisível até animar. -->
+    <div class="tf-overlay" aria-hidden="true"></div>
+
+    <!-- Gradiente reutilizado pelos anéis de progresso (SVG defs global). -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#60A5FA"/>
+                <stop offset="100%" stop-color="#8B5CF6"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
     <header class="site-header">
         <div class="container header-inner">
             {% if session.get('user_id') %}
@@ -49,6 +77,17 @@
             <p>TaskFlow &copy; 2026</p>
         </div>
     </footer>
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {# ---- Camada de animação ----
+       Libs via CDN (sem build step — combina com o deploy Flask/Railway).
+       `defer` garante a ordem: libs -> smooth -> reveal -> micro -> transitions.
+       Se qualquer CDN falhar, os módulos degradam e o site segue funcionando. #}
+    <script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script defer src="{{ url_for('static', filename='js/anim/smooth.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/anim/reveal.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/anim/micro.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/anim/transitions.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>

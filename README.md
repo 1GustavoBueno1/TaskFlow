@@ -65,7 +65,18 @@ TaskFlow/
 │   │   ├── task_service.py     # Tarefas
 │   │   └── user_service.py     # Usuario
 │   │
-│   ├── static/                 # CSS e JS
+│   ├── static/
+│   │   ├── css/
+│   │   │   ├── style.css       # Design system (dark) — base visual
+│   │   │   └── anim.css        # Camada de animação + landing scrollytelling
+│   │   ├── js/
+│   │   │   ├── app.js          # Toggle de senha + mensagens de validação
+│   │   │   └── anim/           # Camada de animação (ver seção abaixo)
+│   │   │       ├── smooth.js       # Lenis + GSAP/ScrollTrigger sincronizados
+│   │   │       ├── reveal.js       # Reveals, contadores, anéis, parallax, pin
+│   │   │       ├── micro.js        # Botão magnético, concluir, exit ao deletar
+│   │   │       └── transitions.js  # Transição de página (wipe via overlay)
+│   │   └── media/              # Mídia opcional da landing (ver media/README.md)
 │   └── templates/              # Páginas Jinja2
 │
 ├── Logs/
@@ -184,6 +195,41 @@ python main.py
 ```bash
 python wsgi.py
 ```
+
+---
+
+## Camada de animação (front-end)
+
+O front-end é **server-rendered** (templates Jinja2) — **não é uma SPA**. A camada de
+animação foi adicionada por cima dos templates existentes, como *progressive enhancement*:
+se o JavaScript ou as CDNs falharem, o site continua 100% funcional, só sem os efeitos.
+
+**Bibliotecas (via CDN, sem build step):**
+
+- **[Lenis](https://github.com/darkroomengineering/lenis)** — smooth scroll global.
+- **[GSAP + ScrollTrigger](https://gsap.com/)** — parallax e o scroll horizontal pinado da landing.
+- **IntersectionObserver** (nativo) — reveals de entrada, contadores e anéis de progresso.
+
+**Onde cada coisa mora:**
+
+| Arquivo                     | Responsabilidade                                                        |
+|-----------------------------|-------------------------------------------------------------------------|
+| `js/anim/smooth.js`         | Liga o Lenis e o sincroniza com o ScrollTrigger; expõe `window.TF`.     |
+| `js/anim/reveal.js`         | `[data-reveal]`, `[data-count]`, `[data-ring]`, `[data-parallax]`, pin. |
+| `js/anim/micro.js`          | Botão magnético, pulso ao concluir, animação de saída ao deletar.       |
+| `js/anim/transitions.js`    | Transição de página (overlay "wipe") entre navegações internas.         |
+| `css/anim.css`              | Estilos da landing scrollytelling + utilitários de animação.            |
+
+**Acessibilidade:** tudo respeita `prefers-reduced-motion`. Com essa preferência ligada,
+o smooth scroll, o parallax e o wipe são desativados e os reveals viram estados finais estáticos.
+
+**Mídia da landing (Higgsfield):** opcional. Coloque os arquivos em `app/static/media/`
+(`hero-loop.mp4`, `hero-poster.jpg`, `section-1.jpg`) — veja `app/static/media/README.md`.
+Sem eles, a landing usa gradientes CSS como fallback.
+
+> **Nota sobre CORS / `VITE_API_URL`:** não se aplicam aqui. Como o front é servido pelo
+> próprio Flask (mesma origem), **não há CORS a configurar** e **não existe `.env` de front**.
+> Esses itens só fariam sentido se o front fosse uma SPA separada consumindo o Flask como API JSON.
 
 ---
 

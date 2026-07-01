@@ -1,0 +1,471 @@
+/* ========================================================================
+   TaskFlow — Camada de animação (anim.css)
+   ------------------------------------------------------------------------
+   Este arquivo NÃO reescreve o design system (style.css). Ele só adiciona:
+     1. A landing scrollytelling pública (hero, manifesto, números, pin, CTA)
+     2. Classes utilitárias de animação usadas pelo JS (reveal, parallax…)
+     3. O overlay de transição de página
+     4. O respeito total a prefers-reduced-motion no final
+   Regra de ouro: animar só transform/opacity (60fps, sem reflow/CLS).
+   ======================================================================== */
+
+:root {
+    /* Cor de destaque da landing — violeta, distinta do azul primário do app.
+       É o "sotaque" pedido: navy + branco + 1 destaque. */
+    --accent: #8B5CF6;
+    --accent-2: #22D3EE;
+    --accent-soft: rgba(139, 92, 246, 0.16);
+}
+
+/* ------------------------------------------------------------------
+   Lenis (smooth scroll)
+   Quando o Lenis está ativo ele adiciona .lenis no <html>. Estas regras
+   vêm da doc oficial e evitam brigar com o scroll nativo.
+   ------------------------------------------------------------------ */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* ========================================================================
+   1. Utilitários de reveal (aplicados pelo JS via IntersectionObserver)
+   ------------------------------------------------------------------------
+   O estado "escondido" só existe quando o JS marca <html class="js-anim">.
+   Sem JS/gsap, o conteúdo aparece normalmente (nada de FOUC eterno).
+   ======================================================================== */
+.js-anim [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    will-change: transform, opacity;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+.js-anim [data-reveal="left"]  { transform: translateX(-40px); }
+.js-anim [data-reveal="right"] { transform: translateX(40px); }
+.js-anim [data-reveal="scale"] { transform: scale(0.92); }
+
+/* .is-visible é adicionada pelo observer quando o elemento entra na viewport */
+.js-anim [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Atraso em cascata (stagger) — usado em listas/grupos */
+.js-anim [data-reveal][data-delay="1"] { transition-delay: 0.08s; }
+.js-anim [data-reveal][data-delay="2"] { transition-delay: 0.16s; }
+.js-anim [data-reveal][data-delay="3"] { transition-delay: 0.24s; }
+.js-anim [data-reveal][data-delay="4"] { transition-delay: 0.32s; }
+.js-anim [data-reveal][data-delay="5"] { transition-delay: 0.40s; }
+
+/* ========================================================================
+   2. Overlay de transição de página (wipe)
+   ------------------------------------------------------------------------
+   Um painel fixo que "cobre" a tela ao clicar num link interno e "revela"
+   ao carregar a próxima página. Animado pelo transitions.js.
+   ======================================================================== */
+.tf-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 60%, #0b1020 100%);
+    transform: scaleY(0);
+    transform-origin: bottom;   /* padrão: escondido embaixo */
+    will-change: transform;
+}
+.tf-overlay::after {
+    /* logo sutil no meio do wipe */
+    content: "TaskFlow";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    font-size: clamp(22px, 4vw, 40px);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.tf-overlay.is-covering::after { opacity: 1; }
+
+/* Quando a página entra vindo de uma transição, o overlay começa cobrindo.
+   A classe .tf-incoming é setada por um script inline no <head> (sem flash). */
+html.tf-incoming .tf-overlay {
+    transform: scaleY(1);
+    transform-origin: top;
+}
+
+/* ========================================================================
+   3. LANDING SCROLLYTELLING (pública)
+   ======================================================================== */
+
+/* Na landing removemos o padding padrão do <main> e o container central,
+   porque as seções ocupam a largura toda. */
+body.landing main { padding: 0; }
+body.landing main > .container { max-width: none; padding: 0; }
+
+.lp {
+    --lp-max: 1120px;
+    color: var(--text);
+}
+.lp-inner {
+    max-width: var(--lp-max);
+    margin: 0 auto;
+    padding: 0 24px;
+    width: 100%;
+}
+.lp-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--accent-2);
+    background: var(--accent-soft);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    margin-bottom: 22px;
+}
+
+/* ---------- HERO ---------- */
+.lp-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    isolation: isolate;
+}
+/* Fundo do hero: gradiente animado é o FALLBACK. Se o vídeo carregar, ele
+   fica por cima do gradiente. Se falhar (404/onerror), o gradiente aparece. */
+.lp-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background:
+        radial-gradient(1000px 600px at 75% 10%, rgba(139, 92, 246, 0.28), transparent 60%),
+        radial-gradient(900px 600px at 10% 90%, rgba(34, 211, 238, 0.16), transparent 55%),
+        linear-gradient(160deg, #0b1020, var(--bg));
+    background-size: 200% 200%;
+    animation: lp-gradient 18s ease infinite;
+}
+@keyframes lp-gradient {
+    0%   { background-position: 0% 0%; }
+    50%  { background-position: 100% 100%; }
+    100% { background-position: 0% 0%; }
+}
+.lp-hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.45;    /* deixa o texto legível por cima */
+}
+/* véu escuro pra contraste do texto */
+.lp-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(11,16,32,0.35), rgba(11,16,32,0.75));
+}
+.lp-hero-content { padding: 120px 0; }
+.lp-hero h1 {
+    font-size: clamp(40px, 7vw, 84px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin: 0 0 22px;
+    max-width: 15ch;
+}
+.lp-hero h1 .grad {
+    background: linear-gradient(120deg, #fff 10%, var(--accent-2) 55%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.lp-hero p {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--text-muted);
+    max-width: 52ch;
+    margin: 0 0 34px;
+}
+.lp-cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* Indicador de scroll no rodapé do hero */
+.lp-scroll-cue {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-faint);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+.lp-scroll-cue span {
+    width: 22px;
+    height: 34px;
+    border: 2px solid var(--border-strong);
+    border-radius: 12px;
+    position: relative;
+}
+.lp-scroll-cue span::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 3px;
+    height: 7px;
+    background: var(--text-muted);
+    border-radius: 2px;
+    transform: translateX(-50%);
+    animation: lp-wheel 1.6s ease infinite;
+}
+@keyframes lp-wheel {
+    0% { opacity: 0; transform: translate(-50%, 0); }
+    40% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, 12px); }
+}
+
+/* ---------- Seção genérica ---------- */
+.lp-section { padding: clamp(80px, 12vh, 160px) 0; position: relative; }
+.lp-section h2 {
+    font-size: clamp(28px, 4.5vw, 52px);
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+    margin: 0 0 18px;
+    max-width: 20ch;
+}
+.lp-section .lp-lead {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--text-muted);
+    max-width: 56ch;
+}
+
+/* ---------- Manifesto (frases grandes revelando) ---------- */
+.lp-manifesto p {
+    font-size: clamp(24px, 4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+    color: var(--text-faint);
+    max-width: 22ch;
+    margin: 0 0 8px;
+}
+.lp-manifesto p .hl { color: var(--text); }
+
+/* ---------- Números / contadores ---------- */
+.lp-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 0;
+}
+.lp-stat .lp-stat-num {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: linear-gradient(120deg, #fff, var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.lp-stat .lp-stat-label {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+/* ---------- "Como funciona": scroll horizontal pinado ---------- */
+.lp-horizontal { position: relative; }
+.lp-horizontal-viewport { overflow: hidden; }
+.lp-horizontal-track {
+    display: flex;
+    gap: 28px;
+    padding: 0 24px;
+    width: max-content;
+}
+.lp-panel {
+    flex: 0 0 min(80vw, 460px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent), var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px 34px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-md);
+}
+.lp-panel-step {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent-2);
+    letter-spacing: 0.14em;
+}
+.lp-panel h3 { font-size: 24px; margin: 18px 0 10px; }
+.lp-panel p { color: var(--text-muted); margin: 0; }
+
+/* ---------- Seções com imagem de fundo (parallax) ---------- */
+.lp-feature {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+    min-height: 420px;
+    display: flex;
+    align-items: flex-end;
+    padding: 40px;
+    border: 1px solid var(--border);
+    background: linear-gradient(160deg, #101728, #0b1020);
+}
+.lp-feature-bg {
+    position: absolute;
+    inset: -12% 0;          /* margem extra p/ o parallax não mostrar borda */
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+    opacity: 0.5;
+    will-change: transform;
+}
+.lp-feature::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(11,16,32,0.9), rgba(11,16,32,0.25));
+    z-index: 1;
+}
+.lp-feature-content { position: relative; z-index: 2; max-width: 40ch; }
+
+/* ---------- CTA final ---------- */
+.lp-cta {
+    text-align: center;
+    padding: clamp(90px, 14vh, 180px) 0;
+    background:
+        radial-gradient(600px 300px at 50% 0%, var(--accent-soft), transparent 70%);
+}
+.lp-cta h2 { margin-left: auto; margin-right: auto; }
+
+/* ========================================================================
+   4. Anéis / barras de progresso (dashboard — "metas" derivadas)
+   ======================================================================== */
+.progress-summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent), var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-sm);
+}
+.ring {
+    position: relative;
+    width: 112px;
+    height: 112px;
+    flex-shrink: 0;
+}
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 10; }
+.ring .ring-track { stroke: var(--surface-2); }
+.ring .ring-fill {
+    stroke: url(#ringGrad);
+    stroke-linecap: round;
+    /* dasharray/offset definidos e animados pelo JS */
+    transition: stroke-dashoffset 1.2s var(--ease-out);
+}
+.ring-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.progress-stats { display: flex; gap: 28px; flex-wrap: wrap; }
+.progress-stat .n {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+.progress-stat .l {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ========================================================================
+   5. Micro-interações
+   ======================================================================== */
+
+/* Card saindo (concluir/deletar) — o JS adiciona .task-exit antes do submit */
+.task-card.task-exit {
+    opacity: 0;
+    transform: translateX(24px) scale(0.98);
+    transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+}
+/* Pulso de "concluída" */
+.task-card.task-done-pulse {
+    animation: task-pulse 0.5s var(--ease-out);
+}
+@keyframes task-pulse {
+    0% { box-shadow: 0 0 0 0 var(--success-soft); }
+    60% { box-shadow: 0 0 0 10px rgba(34,197,94,0); }
+    100% { box-shadow: var(--shadow-sm); }
+}
+
+/* Botão com spinner de loading (forms) */
+.btn.is-loading { color: transparent !important; pointer-events: none; }
+.btn.is-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px; height: 16px;
+    top: 50%; left: 50%;
+    margin: -8px 0 0 -8px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.45);
+    border-top-color: #fff;
+    animation: spin 0.7s linear infinite;
+}
+
+/* Botão magnético: o JS translada via transform; deixamos a transição pronta */
+[data-magnetic] { transition: transform 0.25s var(--ease-out); }
+
+/* ========================================================================
+   6. prefers-reduced-motion — desliga scroll-jacking/parallax/wipe
+   ======================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .lp-hero-bg { animation: none; }
+    .lp-scroll-cue span::after { animation: none; }
+    .tf-overlay { display: none !important; }
+    .js-anim [data-reveal] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+    .ring .ring-fill { transition: none !important; }
+}
+
+/* ========================================================================
+   7. Responsivo da landing
+   ======================================================================== */
+@media (max-width: 720px) {
+    .lp-stats { grid-template-columns: 1fr; text-align: center; gap: 32px; }
+    .progress-summary { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .lp-hero-content { padding: 96px 0; }
+}
